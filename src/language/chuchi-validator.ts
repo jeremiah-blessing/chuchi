@@ -1,31 +1,31 @@
-import type { ValidationAcceptor, ValidationChecks } from 'langium';
-import type { ChuchiAstType, Person } from './generated/ast.js';
-import type { ChuchiServices } from './chuchi-module.js';
+import type { ValidationAcceptor, ValidationChecks } from "langium";
+import type { ChuchiAstType, Move } from "./generated/ast.js";
+import type { ChuchiServices } from "./chuchi-module.js";
 
 /**
  * Register custom validation checks.
  */
 export function registerValidationChecks(services: ChuchiServices) {
-    const registry = services.validation.ValidationRegistry;
-    const validator = services.validation.ChuchiValidator;
-    const checks: ValidationChecks<ChuchiAstType> = {
-        Person: validator.checkPersonStartsWithCapital
-    };
-    registry.register(checks, validator);
+  const registry = services.validation.ValidationRegistry;
+  const validator = services.validation.ChuchiValidator;
+  const checks: ValidationChecks<ChuchiAstType> = {
+    Move: validator.checkIfOutOfRange,
+  };
+  registry.register(checks, validator);
 }
 
 /**
  * Implementation of custom validations.
  */
 export class ChuchiValidator {
-
-    checkPersonStartsWithCapital(person: Person, accept: ValidationAcceptor): void {
-        if (person.name) {
-            const firstChar = person.name.substring(0, 1);
-            if (firstChar.toUpperCase() !== firstChar) {
-                accept('warning', 'Person name should start with a capital.', { node: person, property: 'name' });
-            }
-        }
+  checkIfOutOfRange(move: Move, accept: ValidationAcceptor): void {
+    if (move) {
+      if (move.x < 0) {
+        accept("error", "Move is out of range.", { node: move, property: "x" });
+      }
+      if (move.y < 0) {
+        accept("error", "Move is out of range.", { node: move, property: "y" });
+      }
     }
-
+  }
 }

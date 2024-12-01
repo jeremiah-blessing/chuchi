@@ -1,18 +1,18 @@
 grammar Chuchi
 
 entry Model:
-    (persons+=Person | greetings+=Greeting)*;
+   begin=Begin? actions+=(Move)*;
 
-Person:
-    'person' name=ID;
+Begin:
+    'begin' '(' x=NUMBER ',' y=NUMBER ')';
 
-Greeting:
-    'Hello' person=[Person:ID] '!';
+Move:
+    'move' '(' x=NUMBER ',' y=NUMBER',' type=('walk'|'jump') ')' ;
+
 
 hidden terminal WS: /\s+/;
 terminal ID: /[_a-zA-Z][\w_]*/;
-terminal INT returns number: /[0-9]+/;
-terminal STRING: /"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/;
+terminal NUMBER returns number:    /(?:(?:-?[0-9]+)?\.[0-9]+)|-?[0-9]+/;
 
 hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
 hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
