@@ -25,7 +25,8 @@
     "serve": "npm run dev",
     "test": "vitest run",
     "format": "prettier --check \"**/*.+(js|jsx|ts|tsx|json|yml|yaml|md|css|scss)\"",
-    "format:fix": "prettier --write \"**/*.+(js|jsx|ts|tsx|json|yml|yaml|md|css|scss)\""
+    "format:fix": "prettier --write \"**/*.+(js|jsx|ts|tsx|json|yml|yaml|md|css|scss)\"",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@codingame/monaco-vscode-editor-service-override": "~3.2.3",
@@ -50,7 +51,9 @@
     "esbuild": "~0.20.2",
     "eslint": "~8.57.0",
     "http-server": "~14.1.1",
+    "husky": "^9.1.7",
     "langium-cli": "~3.3.0",
+    "lint-staged": "^15.2.10",
     "prettier": "3.4.2",
     "typescript": "~5.1.6",
     "vite": "~5.2.7",
@@ -96,5 +99,9 @@
   "main": "./out/extension/main.cjs",
   "bin": {
     "chuchi-cli": "./bin/cli.js"
+  },
+  "lint-staged": {
+    "*.ts": "eslint --cache --fix",
+    "*.+(js|jsx|ts|tsx|json|yml|yaml|md|css|scss)": "prettier --write"
   }
 }
