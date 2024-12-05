@@ -1,6 +1,9 @@
 import { startLanguageServer } from 'langium/lsp';
 import { NodeFileSystem } from 'langium/node';
-import { createConnection, ProposedFeatures } from 'vscode-languageserver/node.js';
+import {
+  createConnection,
+  ProposedFeatures,
+} from 'vscode-languageserver/node.js';
 import { createChuchiServices } from './chuchi-module.js';
 
 // Create a connection to the client

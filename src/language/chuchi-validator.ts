@@ -1,6 +1,6 @@
-import type { ValidationAcceptor, ValidationChecks } from "langium";
-import type { ChuchiAstType, Move } from "./generated/ast.js";
-import type { ChuchiServices } from "./chuchi-module.js";
+import type { ValidationAcceptor, ValidationChecks } from 'langium';
+import type { ChuchiAstType, Move } from './generated/ast.js';
+import type { ChuchiServices } from './chuchi-module.js';
 
 /**
  * Register custom validation checks.
@@ -21,10 +21,10 @@ export class ChuchiValidator {
   checkIfOutOfRange(move: Move, accept: ValidationAcceptor): void {
     if (move) {
       if (move.x < 0) {
-        accept("error", "Move is out of range.", { node: move, property: "x" });
+        accept('error', 'Move is out of range.', { node: move, property: 'x' });
       }
       if (move.y < 0) {
-        accept("error", "Move is out of range.", { node: move, property: "y" });
+        accept('error', 'Move is out of range.', { node: move, property: 'y' });
       }
     }
   }

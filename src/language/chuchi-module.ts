@@ -1,32 +1,48 @@
 import { type Module, inject } from 'langium';
-import { createDefaultModule, createDefaultSharedModule, type DefaultSharedModuleContext, type LangiumServices, type LangiumSharedServices, type PartialLangiumServices } from 'langium/lsp';
-import { ChuchiGeneratedModule, ChuchiGeneratedSharedModule } from './generated/module.js';
-import { ChuchiValidator, registerValidationChecks } from './chuchi-validator.js';
+import {
+  createDefaultModule,
+  createDefaultSharedModule,
+  type DefaultSharedModuleContext,
+  type LangiumServices,
+  type LangiumSharedServices,
+  type PartialLangiumServices,
+} from 'langium/lsp';
+import {
+  ChuchiGeneratedModule,
+  ChuchiGeneratedSharedModule,
+} from './generated/module.js';
+import {
+  ChuchiValidator,
+  registerValidationChecks,
+} from './chuchi-validator.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
  */
 export type ChuchiAddedServices = {
-    validation: {
-        ChuchiValidator: ChuchiValidator
-    }
-}
+  validation: {
+    ChuchiValidator: ChuchiValidator;
+  };
+};
 
 /**
  * Union of Langium default services and your custom services - use this as constructor parameter
  * of custom service classes.
  */
-export type ChuchiServices = LangiumServices & ChuchiAddedServices
+export type ChuchiServices = LangiumServices & ChuchiAddedServices;
 
 /**
  * Dependency injection module that overrides Langium default services and contributes the
  * declared custom services. The Langium defaults can be partially specified to override only
  * selected services, while the custom services must be fully specified.
  */
-export const ChuchiModule: Module<ChuchiServices, PartialLangiumServices & ChuchiAddedServices> = {
-    validation: {
-        ChuchiValidator: () => new ChuchiValidator()
-    }
+export const ChuchiModule: Module<
+  ChuchiServices,
+  PartialLangiumServices & ChuchiAddedServices
+> = {
+  validation: {
+    ChuchiValidator: () => new ChuchiValidator(),
+  },
 };
 
 /**
@@ -45,24 +61,24 @@ export const ChuchiModule: Module<ChuchiServices, PartialLangiumServices & Chuch
  * @returns An object wrapping the shared services and the language-specific services
  */
 export function createChuchiServices(context: DefaultSharedModuleContext): {
-    shared: LangiumSharedServices,
-    Chuchi: ChuchiServices
+  shared: LangiumSharedServices;
+  Chuchi: ChuchiServices;
 } {
-    const shared = inject(
-        createDefaultSharedModule(context),
-        ChuchiGeneratedSharedModule
-    );
-    const Chuchi = inject(
-        createDefaultModule({ shared }),
-        ChuchiGeneratedModule,
-        ChuchiModule
-    );
-    shared.ServiceRegistry.register(Chuchi);
-    registerValidationChecks(Chuchi);
-    if (!context.connection) {
-        // We don't run inside a language server
-        // Therefore, initialize the configuration provider instantly
-        shared.workspace.ConfigurationProvider.initialized({});
-    }
-    return { shared, Chuchi };
+  const shared = inject(
+    createDefaultSharedModule(context),
+    ChuchiGeneratedSharedModule
+  );
+  const Chuchi = inject(
+    createDefaultModule({ shared }),
+    ChuchiGeneratedModule,
+    ChuchiModule
+  );
+  shared.ServiceRegistry.register(Chuchi);
+  registerValidationChecks(Chuchi);
+  if (!context.connection) {
+    // We don't run inside a language server
+    // Therefore, initialize the configuration provider instantly
+    shared.workspace.ConfigurationProvider.initialized({});
+  }
+  return { shared, Chuchi };
 }

@@ -1,15 +1,17 @@
 {
-    "projectName": "Chuchi",
-    "languages": [{
-        "id": "chuchi",
-        "grammar": "src/language/chuchi.langium",
-        "fileExtensions": [".chuchi"],
-        "textMate": {
-            "out": "syntaxes/chuchi.tmLanguage.json"
-        },
-        "monarch": {
-            "out": "src/syntaxes/chuchi.monarch.ts"
-        }
-    }],
-    "out": "src/language/generated"
+  "projectName": "Chuchi",
+  "languages": [
+    {
+      "id": "chuchi",
+      "grammar": "src/language/chuchi.langium",
+      "fileExtensions": [".chuchi"],
+      "textMate": {
+        "out": "syntaxes/chuchi.tmLanguage.json"
+      },
+      "monarch": {
+        "out": "src/syntaxes/chuchi.monarch.ts"
+      }
+    }
+  ],
+  "out": "src/language/generated"
 }
