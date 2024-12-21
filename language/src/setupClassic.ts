@@ -12,7 +12,9 @@ export const setupConfigClassic = (): UserConfig => {
       editorAppConfig: {
         $type: 'classic',
         languageId: 'chuchi',
-        code: `// Chuchi is running in the web!`,
+        code: `// Chuchi Sample Code
+begin(1, 0)
+move(1, -9, jump)`,
         useDiffEditor: false,
         languageExtensionConfig: { id: 'langium' },
         languageDef: monarchSyntax,
@@ -30,4 +32,16 @@ export const executeClassic = async (htmlElement: HTMLElement) => {
   const userConfig = setupConfigClassic();
   const wrapper = new MonacoEditorLanguageClientWrapper();
   await wrapper.initAndStart(userConfig, htmlElement);
+
+  const client = wrapper.getLanguageClient();
+
+  client?.onNotification('browser/DocumentChange', (resp) => {
+    // always store this new program in local storage
+
+    let result = JSON.parse(resp.content);
+    let commands = result.$commands;
+
+    console.log(result);
+    // console.log('DocumentChange', result);
+  });
 };
