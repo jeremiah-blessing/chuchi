@@ -16,7 +16,6 @@
     "frontend"
   ],
   "lint-staged": {
-    "*.ts": "eslint --cache --fix",
     "*.+(js|jsx|ts|tsx|json|yml|yaml|md|css|scss)": "prettier --write"
   },
   "devDependencies": {
