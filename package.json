@@ -12,7 +12,7 @@
   "author": "",
   "license": "ISC",
   "workspaces": [
-    "chuchi",
+    "frontend",
     "language"
   ],
   "lint-staged": {

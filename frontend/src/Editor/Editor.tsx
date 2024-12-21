@@ -1,29 +1,15 @@
-import {
-  MonacoEditorLanguageClientWrapper,
-  WrapperConfig,
-} from 'monaco-editor-wrapper';
 import { useEffect, useRef } from 'react';
+import { configureMonacoWorkers } from './setupCommon';
+import { executeClassic } from './setupClassic';
 
 export const Editor = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const doo = async () => {
-      const wrapper = new MonacoEditorLanguageClientWrapper();
-      const wrapperConfig: WrapperConfig = {
-        $type: 'extendend',
-        htmlContainer: containerRef.current!,
-        editorAppConfig: {
-          codeResources: {
-            main: {
-              text: 'print("Hello, World!")',
-              uri: '/workspace/hello.py',
-            },
-          },
-        },
-      };
-
-      await wrapper.initAndStart(wrapperConfig);
+      configureMonacoWorkers();
+      // keep a reference to a promise for when the editor is finished starting, we'll use this to setup the canvas on load
+      await executeClassic(containerRef.current!);
     };
 
     doo();
