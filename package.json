@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "generate:worker": "npm run build -w language && npm run build:worker -w language && cp language/public/chuchiWorker.js frontend/public/chuchiWorker.js",
     "format": "prettier --check \"**/*.+(js|jsx|ts|tsx|json|yml|yaml|md|css|scss)\"",
     "format:fix": "prettier --write \"**/*.+(js|jsx|ts|tsx|json|yml|yaml|md|css|scss)\"",
     "prepare": "husky install"

@@ -17,7 +17,7 @@
     "langium:watch": "langium generate --watch",
     "vscode:prepublish": "npm run build && npm run lint",
     "build:web": "npm run build",
-    "build:worker": "esbuild --minify ./out/language/main-browser.js --bundle --format=iife --outfile=./public/minilogo-server-worker.js",
+    "build:worker": "esbuild --minify ./out/language/main-browser.js --bundle --format=iife --outfile=./public/chuchiWorker.js",
     "bundle": "vite build",
     "bundle:serve": "http-server ./dist --port 5175",
     "dev": "vite",

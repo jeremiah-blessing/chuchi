@@ -2,17 +2,19 @@ import {
   MonacoEditorLanguageClientWrapper,
   UserConfig,
 } from 'monaco-editor-wrapper';
-// import { configureWorker, defineUserServices } from './setupCommon.js';
+import { configureWorker, defineUserServices } from './setupCommon.js';
 import { syntax } from './syntax.js';
 
 export const setupConfigClassic = (): UserConfig => {
   return {
     wrapperConfig: {
-      //   serviceConfig: defineUserServices(),
+      serviceConfig: defineUserServices(),
       editorAppConfig: {
         $type: 'classic',
         languageId: 'chuchi',
-        code: `// Chuchi is running in the web!`,
+        code: `// Chuchi Sample Code
+        begin(1, 0)
+        move(1, -9, jump)`,
         useDiffEditor: false,
         languageExtensionConfig: { id: 'langium' },
         languageDef: syntax,
@@ -22,7 +24,7 @@ export const setupConfigClassic = (): UserConfig => {
         },
       },
     },
-    // languageClientConfig: configureWorker(),
+    languageClientConfig: configureWorker(),
   };
 };
 
@@ -30,4 +32,6 @@ export const executeClassic = async (htmlElement: HTMLElement) => {
   const userConfig = setupConfigClassic();
   const wrapper = new MonacoEditorLanguageClientWrapper();
   await wrapper.initAndStart(userConfig, htmlElement);
+
+  return wrapper;
 };

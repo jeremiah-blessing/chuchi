@@ -41,7 +41,6 @@ export const executeClassic = async (htmlElement: HTMLElement) => {
     let result = JSON.parse(resp.content);
     let commands = result.$commands;
 
-    console.log(result);
-    // console.log('DocumentChange', result);
+    console.log(commands);
   });
 };

@@ -1,19 +1,25 @@
 import { useEffect, useRef } from 'react';
 import { configureMonacoWorkers } from './setupCommon';
 import { executeClassic } from './setupClassic';
+import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
 
 export const Editor = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const editorRef = useRef<MonacoEditorLanguageClientWrapper | null>(null);
 
   useEffect(() => {
-    const doo = async () => {
+    const createEditor = async () => {
       configureMonacoWorkers();
-      // keep a reference to a promise for when the editor is finished starting, we'll use this to setup the canvas on load
-      await executeClassic(containerRef.current!);
+      const editor = await executeClassic(containerRef.current!);
+      editorRef.current = editor;
     };
 
-    doo();
+    createEditor();
+
+    return () => {
+      editorRef.current?.dispose();
+    };
   }, []);
 
-  return <div ref={containerRef}></div>;
+  return <div style={{ height: 700 }} ref={containerRef}></div>;
 };
