@@ -13,7 +13,7 @@
   "license": "ISC",
   "workspaces": [
     "chuchi",
-    "frontend"
+    "language"
   ],
   "lint-staged": {
     "*.+(js|jsx|ts|tsx|json|yml|yaml|md|css|scss)": "prettier --write"
