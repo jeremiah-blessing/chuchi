@@ -13,8 +13,8 @@ export const setupConfigClassic = (): UserConfig => {
         $type: 'classic',
         languageId: 'chuchi',
         code: `// Chuchi Sample Code
-        begin(1, 0)
-        move(1, -9, jump)`,
+begin(1, 0)
+move(1, -9, jump)`,
         useDiffEditor: false,
         languageExtensionConfig: { id: 'langium' },
         languageDef: syntax,

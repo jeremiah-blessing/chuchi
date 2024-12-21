@@ -21,5 +21,5 @@ export const Editor = () => {
     };
   }, []);
 
-  return <div style={{ height: 700 }} ref={containerRef}></div>;
+  return <div className="w-full h-full" ref={containerRef}></div>;
 };

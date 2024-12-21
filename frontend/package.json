@@ -12,11 +12,14 @@
   "dependencies": {
     "@codingame/monaco-vscode-editor-service-override": "~3.2.3",
     "@codingame/monaco-vscode-keybindings-service-override": "~3.2.3",
+    "@react-three/drei": "^9.120.4",
+    "@react-three/fiber": "^8.17.10",
     "monaco-editor": "npm:@codingame/monaco-vscode-editor-api@~3.2.3",
     "monaco-editor-wrapper": "~4.0.2",
     "monaco-languageclient": "~8.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "three": "^0.171.0",
     "vscode": "npm:@codingame/monaco-vscode-api@~3.2.3"
   },
   "devDependencies": {
