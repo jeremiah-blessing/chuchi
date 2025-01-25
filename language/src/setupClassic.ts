@@ -35,7 +35,11 @@ export const executeClassic = async (htmlElement: HTMLElement) => {
 
   const client = wrapper.getLanguageClient();
 
-  client?.onNotification('browser/DocumentChange', (resp) => {
+  if (!client) {
+    throw new Error('Unable to obtain language client!');
+  }
+
+  client.onNotification('browser/DocumentChange', (resp) => {
     // always store this new program in local storage
 
     let result = JSON.parse(resp.content);

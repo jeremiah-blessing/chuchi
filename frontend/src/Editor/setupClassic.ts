@@ -28,10 +28,28 @@ move(1, -9, jump)`,
   };
 };
 
-export const executeClassic = async (htmlElement: HTMLElement) => {
+export const executeClassic = async (
+  htmlElement: HTMLElement,
+  onCommands: (commands: any[]) => void
+) => {
   const userConfig = setupConfigClassic();
   const wrapper = new MonacoEditorLanguageClientWrapper();
   await wrapper.initAndStart(userConfig, htmlElement);
+
+  const client = wrapper.getLanguageClient();
+
+  if (!client) {
+    throw new Error('Unable to obtain language client!');
+  }
+
+  client.onNotification('browser/DocumentChange', (resp) => {
+    const result = JSON.parse(resp.content);
+    const diagnosistics = resp.diagnostics as Array<any>;
+
+    if (diagnosistics.length === 0) {
+      onCommands(result.$commands);
+    }
+  });
 
   return wrapper;
 };

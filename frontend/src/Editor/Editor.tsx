@@ -3,14 +3,18 @@ import { configureMonacoWorkers } from './setupCommon';
 import { executeClassic } from './setupClassic';
 import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
 
-export const Editor = () => {
+interface EditorProps {
+  onCommands?: (commands: any[]) => void;
+}
+
+export const Editor = ({ onCommands = () => {} }: EditorProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<MonacoEditorLanguageClientWrapper | null>(null);
 
   useEffect(() => {
     const createEditor = async () => {
       configureMonacoWorkers();
-      const editor = await executeClassic(containerRef.current!);
+      const editor = await executeClassic(containerRef.current!, onCommands);
       editorRef.current = editor;
     };
 

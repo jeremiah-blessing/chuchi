@@ -5,7 +5,7 @@ export const App = () => {
   return (
     <div className="w-screen min-h-screen flex">
       <div className="w-1/2">
-        <Editor />
+        <Editor onCommands={(commands) => console.log(commands)} />
       </div>
       <div className="w-1/2">
         <Player />

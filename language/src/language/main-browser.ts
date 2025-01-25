@@ -9,6 +9,7 @@ import {
 } from 'vscode-languageserver/browser.js';
 import { createChuchiServices } from './chuchi-module.js';
 import { Model } from './generated/ast.js';
+import { generateChuchiCommands } from './chuchi-generator.js';
 
 declare const self: DedicatedWorkerGlobalScope;
 
@@ -39,9 +40,8 @@ shared.workspace.DocumentBuilder.onBuildPhase(
     for (const document of documents) {
       const module = document.parseResult.value as Model;
 
-      (module as unknown as { $commands: any[] }).$commands = [
-        { message: 'Hi Jeremiah!' },
-      ];
+      (module as unknown as { $commands: any[] }).$commands =
+        generateChuchiCommands(module);
 
       // inject the commands into the model
       // this is safe so long as you careful to not clobber existing properties
