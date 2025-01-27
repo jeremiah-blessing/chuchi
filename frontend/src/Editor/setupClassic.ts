@@ -12,9 +12,9 @@ export const setupConfigClassic = (): UserConfig => {
       editorAppConfig: {
         $type: 'classic',
         languageId: 'chuchi',
-        code: `// Chuchi Sample Code
-begin(1, 0)
-move(1, -9, jump)`,
+        code: `begin(1, 0)
+move(1, 9, jump)
+move(10, 10, jump)`,
         useDiffEditor: false,
         languageExtensionConfig: { id: 'langium' },
         languageDef: syntax,
