@@ -15,6 +15,7 @@ export const defineUserServices = () => {
 };
 
 export const configureMonacoWorkers = () => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useWorkerFactory({
     ignoreMapping: true,
     workerLoaders: {
@@ -31,10 +32,13 @@ export const configureMonacoWorkers = () => {
 };
 
 export const configureWorker = (): LanguageClientConfig => {
-  const lsWorker = new Worker('/chuchiWorker.js', {
-    type: 'module',
-    name: 'Chuchi Language Server',
-  });
+  const lsWorker = new Worker(
+    `${import.meta.env.DEV ? '' : '/chuchi'}/chuchiWorker.js`,
+    {
+      type: 'module',
+      name: 'Chuchi Language Server',
+    }
+  );
 
   return {
     options: {
