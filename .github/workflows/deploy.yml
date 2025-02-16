@@ -1,0 +1,35 @@
+name: Deploy Chuchi to GitHub Pages
+
+on:
+  push:
+    branches:
+      - master
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the code (using v4)
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Set up Node.js environment (using v4, version 22)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # Install dependencies and build the project inside the 'frontend' folder
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Vite App
+        run: npm run build --workspace=frontend
+
+      # Upload the build artifact to GitHub Pages
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./frontend/dist

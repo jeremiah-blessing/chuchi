@@ -4,3 +4,5 @@ dist
 out
 package-lock.json
 chuchi/public
+frontend/public/chuchiWorker.js
+language/public/chuchiWorker.js
