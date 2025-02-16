@@ -15,5 +15,5 @@ export default defineConfig({
       plugins: [importMetaUrlPlugin],
     },
   },
-  base: 'chuchi',
+  base: '/chuchi',
 });
