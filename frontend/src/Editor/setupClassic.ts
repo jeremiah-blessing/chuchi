@@ -4,6 +4,7 @@ import {
 } from 'monaco-editor-wrapper';
 import { configureWorker, defineUserServices } from './setupCommon.js';
 import { syntax } from './syntax.js';
+import { ICommand } from '../types.js';
 
 export const setupConfigClassic = (): UserConfig => {
   return {
@@ -21,6 +22,7 @@ move(10, 10, jump)`,
         editorOptions: {
           'semanticHighlighting.enabled': true,
           theme: 'vs-dark',
+          minimap: { enabled: false },
         },
       },
     },
@@ -30,7 +32,7 @@ move(10, 10, jump)`,
 
 export const executeClassic = async (
   htmlElement: HTMLElement,
-  onCommands: (commands: any[]) => void
+  onCommands: (commands: ICommand[]) => void
 ) => {
   const userConfig = setupConfigClassic();
   const wrapper = new MonacoEditorLanguageClientWrapper();
@@ -44,7 +46,7 @@ export const executeClassic = async (
 
   client.onNotification('browser/DocumentChange', (resp) => {
     const result = JSON.parse(resp.content);
-    const diagnosistics = resp.diagnostics as Array<any>;
+    const diagnosistics = resp.diagnostics as Array<unknown>;
 
     if (diagnosistics.length === 0) {
       onCommands(result.$commands);

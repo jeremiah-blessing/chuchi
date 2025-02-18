@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import {
   OrbitControls,
   Instances,
@@ -5,11 +6,15 @@ import {
   Environment,
   RoundedBox,
 } from '@react-three/drei';
-import { Canvas } from '@react-three/fiber';
-import { useEffect, useRef } from 'react';
 import { Mesh } from 'three';
+import { Canvas } from '@react-three/fiber';
+import gsap from 'gsap';
+import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
+import { ICommand } from '../types';
 
-export const Player = ({ commands }: { commands: any[] }) => {
+gsap.registerPlugin(MotionPathPlugin);
+
+export const Player = ({ commands }: { commands: ICommand[] }) => {
   return (
     <div className="w-full h-full">
       <Canvas
@@ -67,22 +72,35 @@ const Grid = ({ number = 23, lineWidth = 0.026, height = 0.5 }) => (
   </Instances>
 );
 
-const BoxPerson = ({ commands }: { commands: any[] }) => {
+const BoxPerson = ({ commands }: { commands: ICommand[] }) => {
   const meshRef = useRef<Mesh>(null!);
 
   useEffect(() => {
-    const sleep = () => new Promise((resolve) => setTimeout(resolve, 1000));
+    const tl = gsap.timeline({});
 
-    const doAnimation = async () => {
-      for (let i = 0; i < commands.length; i++) {
-        const command = commands[i];
-        await sleep();
-        meshRef.current.position.x = command.x;
-        meshRef.current.position.z = command.y;
+    commands.forEach((command: ICommand) => {
+      if (command.type === 'start') {
+        tl.from(meshRef.current.position, {
+          x: command.x,
+          z: command.y,
+          duration: 0,
+        });
       }
-    };
 
-    doAnimation();
+      if (command.type === 'jump') {
+        tl.to(meshRef.current.position, {
+          x: command.x,
+          z: command.y,
+          duration: 1,
+        });
+      }
+    });
+
+    tl.play();
+
+    return () => {
+      tl.kill();
+    };
   }, [commands]);
 
   return (

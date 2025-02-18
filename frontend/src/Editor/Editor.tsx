@@ -2,9 +2,10 @@ import { useEffect, useRef } from 'react';
 import { configureMonacoWorkers } from './setupCommon';
 import { executeClassic } from './setupClassic';
 import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
+import { ICommand } from '../types';
 
 interface EditorProps {
-  onCommands?: (commands: any[]) => void;
+  onCommands?: (commands: ICommand[]) => void;
 }
 
 export const Editor = ({ onCommands = () => {} }: EditorProps) => {
@@ -23,7 +24,7 @@ export const Editor = ({ onCommands = () => {} }: EditorProps) => {
     return () => {
       editorRef.current?.dispose();
     };
-  }, []);
+  }, [onCommands]);
 
   return <div className="w-full h-full" ref={containerRef}></div>;
 };
