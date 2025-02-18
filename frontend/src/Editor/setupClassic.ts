@@ -14,8 +14,13 @@ export const setupConfigClassic = (): UserConfig => {
         $type: 'classic',
         languageId: 'chuchi',
         code: `begin(1, 0)
-move(1, 9, jump)
-move(10, 10, jump)`,
+move(1, 9, walk)
+move(7, 10, jump)
+move(5, 5, jump)
+move(3, 0, walk)
+move(10, 3, jump)
+move(3, 10, walk)
+move(3, 3, jump)`,
         useDiffEditor: false,
         languageExtensionConfig: { id: 'langium' },
         languageDef: syntax,

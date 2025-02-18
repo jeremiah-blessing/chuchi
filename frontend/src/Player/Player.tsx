@@ -91,7 +91,17 @@ const BoxPerson = ({ commands }: { commands: ICommand[] }) => {
         tl.to(meshRef.current.position, {
           x: command.x,
           z: command.y,
-          duration: 1,
+          duration: 2,
+          ease: 'power4.inOut',
+        });
+      }
+
+      if (command.type === 'walk') {
+        tl.to(meshRef.current.position, {
+          x: command.x,
+          z: command.y,
+          duration: 2,
+          ease: 'steps(12)',
         });
       }
     });

@@ -4,8 +4,8 @@ interface StartCommand {
   y: number;
 }
 
-interface MoveCommand {
-  type: 'move';
+interface WalkCommand {
+  type: 'walk';
   x: number;
   y: number;
 }
@@ -16,4 +16,4 @@ interface JumpCommand {
   y: number;
 }
 
-export type ICommand = StartCommand | MoveCommand | JumpCommand;
+export type ICommand = StartCommand | WalkCommand | JumpCommand;
