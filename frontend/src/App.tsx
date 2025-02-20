@@ -8,11 +8,15 @@ export const App = () => {
 
   return (
     <div className="w-screen min-h-screen flex">
-      <div className="w-1/2">
-        <Editor onCommands={setCommands} />
+      <div className="flex-1 p-8">
+        <div className="h-full rounded-xl overflow-hidden shadow-lg">
+          <Editor onCommands={setCommands} />
+        </div>
       </div>
-      <div className="w-1/2">
-        <Player commands={commands} />
+      <div className="flex-1 p-8">
+        <div className="h-full rounded-xl overflow-hidden border border-gray-100">
+          <Player commands={commands} />
+        </div>
       </div>
     </div>
   );

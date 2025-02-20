@@ -26,5 +26,7 @@ export const Editor = ({ onCommands = () => {} }: EditorProps) => {
     };
   }, [onCommands]);
 
-  return <div className="w-full h-full" ref={containerRef}></div>;
+  return (
+    <div className="w-full h-full p-6 bg-[#1E1E1E]" ref={containerRef}></div>
+  );
 };
