@@ -21,7 +21,7 @@ import { Canvas } from '@react-three/fiber';
 import gsap from 'gsap';
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin';
 import { ICommand } from '../types';
-import { useTheme, Theme } from '../theme';
+import { useTheme } from '../theme';
 
 gsap.registerPlugin(MotionPathPlugin);
 
@@ -266,12 +266,10 @@ export const Player = ({
   commands,
   timelineRef,
   onComplete,
-  isPlaying,
 }: {
   commands: ICommand[];
   timelineRef: React.MutableRefObject<gsap.core.Timeline | null>;
   onComplete: () => void;
-  isPlaying: boolean;
 }) => {
   const theme = useTheme();
   const t = sceneThemes[theme];

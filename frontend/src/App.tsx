@@ -222,7 +222,6 @@ export const App = () => {
               commands={commands}
               timelineRef={timelineRef}
               onComplete={handleComplete}
-              isPlaying={isPlaying}
             />
           </div>
         </div>
