@@ -1,65 +1,52 @@
 import { beforeAll, describe, expect, test } from 'vitest';
 import { EmptyFileSystem, type LangiumDocument } from 'langium';
-import { expandToString as s } from 'langium/generate';
 import { parseHelper } from 'langium/test';
 import { createChuchiServices } from '../../src/language/chuchi-module.js';
 import { Model, isModel } from '../../src/language/generated/ast.js';
 
 let services: ReturnType<typeof createChuchiServices>;
 let parse: ReturnType<typeof parseHelper<Model>>;
-let document: LangiumDocument<Model> | undefined;
 
 beforeAll(async () => {
   services = createChuchiServices(EmptyFileSystem);
   parse = parseHelper<Model>(services.Chuchi);
-
-  // activate the following if your linking test requires elements from a built-in library, for example
-  // await services.shared.workspace.WorkspaceManager.initializeWorkspace([]);
 });
 
 describe('Parsing tests', () => {
-  test('parse simple model', async () => {
-    document = await parse(`
-            person Langium
-            Hello Langium!
-        `);
+  test('parse begin and move', async () => {
+    const document = await parse(`
+      begin(1, 2)
+      move(3, 4, walk)
+    `);
 
-    // check for absensce of parser errors the classic way:
-    //  deacivated, find a much more human readable way below!
-    // expect(document.parseResult.parserErrors).toHaveLength(0);
+    expect(document.parseResult.parserErrors).toHaveLength(0);
+    const model = document.parseResult.value;
+    expect(isModel(model)).toBe(true);
+    expect(model.begin?.x).toBe(1);
+    expect(model.begin?.y).toBe(2);
+    expect(model.actions).toHaveLength(1);
+  });
 
-    expect(
-      // here we use a (tagged) template expression to create a human readable representation
-      //  of the AST part we are interested in and that is to be compared to our expectation;
-      // prior to the tagged template expression we check for validity of the parsed document object
-      //  by means of the reusable function 'checkDocumentValid()' to sort out (critical) typos first;
-      checkDocumentValid(document) ||
-        s`
-                Persons:
-                  ${document.parseResult.value?.persons?.map((p) => p.name)?.join('\n  ')}
-                Greetings to:
-                  ${document.parseResult.value?.greetings?.map((g) => g.person.$refText)?.join('\n  ')}
-            `
-    ).toBe(s`
-            Persons:
-              Langium
-            Greetings to:
-              Langium
-        `);
+  test('parse all command types', async () => {
+    const document = await parse(`
+      begin(0, 0)
+      move(5, 5, jump)
+      turn(left)
+      wait(2)
+      color(red)
+    `);
+
+    expect(document.parseResult.parserErrors).toHaveLength(0);
+    expect(document.parseResult.value.actions).toHaveLength(4);
+  });
+
+  test('parse without begin', async () => {
+    const document = await parse(`
+      move(1, 1, walk)
+    `);
+
+    expect(document.parseResult.parserErrors).toHaveLength(0);
+    expect(document.parseResult.value.begin).toBeUndefined();
+    expect(document.parseResult.value.actions).toHaveLength(1);
   });
 });
-
-function checkDocumentValid(document: LangiumDocument): string | undefined {
-  return (
-    (document.parseResult.parserErrors.length &&
-      s`
-        Parser errors:
-          ${document.parseResult.parserErrors.map((e) => e.message).join('\n  ')}
-    `) ||
-    (document.parseResult.value === undefined &&
-      `ParseResult is 'undefined'.`) ||
-    (!isModel(document.parseResult.value) &&
-      `Root AST object is a ${document.parseResult.value.$type}, expected a '${Model}'.`) ||
-    undefined
-  );
-}

@@ -16,4 +16,25 @@ interface JumpCommand {
   y: number;
 }
 
-export type ICommand = StartCommand | WalkCommand | JumpCommand;
+interface TurnCommand {
+  type: 'turn';
+  direction: 'left' | 'right' | 'up' | 'down';
+}
+
+interface WaitCommand {
+  type: 'wait';
+  duration: number;
+}
+
+interface ColorCommand {
+  type: 'color';
+  value: string;
+}
+
+export type ICommand =
+  | StartCommand
+  | WalkCommand
+  | JumpCommand
+  | TurnCommand
+  | WaitCommand
+  | ColorCommand;

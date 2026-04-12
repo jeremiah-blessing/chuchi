@@ -1,5 +1,17 @@
 export const syntax = {
-  keywords: ['begin', 'jump', 'move', 'walk'],
+  keywords: [
+    'begin',
+    'jump',
+    'move',
+    'walk',
+    'turn',
+    'left',
+    'right',
+    'up',
+    'down',
+    'wait',
+    'color',
+  ],
   operators: [','],
   symbols: /\(|\)|,/,
 

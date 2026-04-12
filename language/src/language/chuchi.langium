@@ -1,14 +1,25 @@
 grammar Chuchi
 
 entry Model:
-   begin=Begin? actions+=(Move)*;
+   begin=Begin? actions+=(Action)*;
+
+Action:
+    Move | Turn | Wait | Color;
 
 Begin:
     'begin' '(' x=NUMBER ',' y=NUMBER ')';
 
 Move:
-    'move' '(' x=NUMBER ',' y=NUMBER',' type=('walk'|'jump') ')' ;
+    'move' '(' x=NUMBER ',' y=NUMBER ',' type=('walk'|'jump') ')';
 
+Turn:
+    'turn' '(' direction=('left'|'right'|'up'|'down') ')';
+
+Wait:
+    'wait' '(' duration=NUMBER ')';
+
+Color:
+    'color' '(' value=ID ')';
 
 hidden terminal WS: /\s+/;
 terminal ID: /[_a-zA-Z][\w_]*/;

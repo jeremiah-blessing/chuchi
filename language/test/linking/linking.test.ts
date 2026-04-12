@@ -1,59 +1,45 @@
-import { afterEach, beforeAll, describe, expect, test } from 'vitest';
-import { EmptyFileSystem, type LangiumDocument } from 'langium';
-import { expandToString as s } from 'langium/generate';
-import { clearDocuments, parseHelper } from 'langium/test';
+import { beforeAll, describe, expect, test } from 'vitest';
+import { EmptyFileSystem } from 'langium';
+import { parseHelper } from 'langium/test';
 import { createChuchiServices } from '../../src/language/chuchi-module.js';
-import { Model, isModel } from '../../src/language/generated/ast.js';
+import { Model } from '../../src/language/generated/ast.js';
+import { generateChuchiCommands } from '../../src/language/chuchi-generator.js';
 
 let services: ReturnType<typeof createChuchiServices>;
 let parse: ReturnType<typeof parseHelper<Model>>;
-let document: LangiumDocument<Model> | undefined;
 
 beforeAll(async () => {
   services = createChuchiServices(EmptyFileSystem);
   parse = parseHelper<Model>(services.Chuchi);
-
-  // activate the following if your linking test requires elements from a built-in library, for example
-  // await services.shared.workspace.WorkspaceManager.initializeWorkspace([]);
 });
 
-afterEach(async () => {
-  document && clearDocuments(services.shared, [document]);
-});
+describe('Command generation', () => {
+  test('generates commands from model', async () => {
+    const document = await parse(`
+      begin(1, 2)
+      move(3, 4, walk)
+      turn(right)
+      wait(1)
+      color(blue)
+    `);
 
-describe('Linking tests', () => {
-  test('linking of greetings', async () => {
-    document = await parse(`
-            person Langium
-            Hello Langium!
-        `);
+    expect(document.parseResult.parserErrors).toHaveLength(0);
+    const commands = generateChuchiCommands(document.parseResult.value);
 
-    expect(
-      // here we first check for validity of the parsed document object by means of the reusable function
-      //  'checkDocumentValid()' to sort out (critical) typos first,
-      // and then evaluate the cross references we're interested in by checking
-      //  the referenced AST element as well as for a potential error message;
-      checkDocumentValid(document) ||
-        document.parseResult.value.greetings
-          .map((g) => g.person.ref?.name || g.person.error?.message)
-          .join('\n')
-    ).toBe(s`
-            Langium
-        `);
+    expect(commands).toHaveLength(5);
+    expect(commands[0]).toEqual({ type: 'start', x: 1, y: 2 });
+    expect(commands[1]).toEqual({ type: 'walk', x: 3, y: 4 });
+    expect(commands[2]).toEqual({ type: 'turn', direction: 'right' });
+    expect(commands[3]).toEqual({ type: 'wait', duration: 1 });
+    expect(commands[4]).toEqual({ type: 'color', value: 'blue' });
+  });
+
+  test('default start position when no begin', async () => {
+    const document = await parse(`
+      move(5, 5, jump)
+    `);
+
+    const commands = generateChuchiCommands(document.parseResult.value);
+    expect(commands[0]).toEqual({ type: 'start', x: 0, y: 0 });
   });
 });
-
-function checkDocumentValid(document: LangiumDocument): string | undefined {
-  return (
-    (document.parseResult.parserErrors.length &&
-      s`
-        Parser errors:
-          ${document.parseResult.parserErrors.map((e) => e.message).join('\n  ')}
-    `) ||
-    (document.parseResult.value === undefined &&
-      `ParseResult is 'undefined'.`) ||
-    (!isModel(document.parseResult.value) &&
-      `Root AST object is a ${document.parseResult.value.$type}, expected a '${Model}'.`) ||
-    undefined
-  );
-}

@@ -1,2 +1,6 @@
-begin(0,10)
-move(10,10,jump)
+begin(0, 10)
+move(10, 10, jump)
+turn(right)
+wait(1)
+color(blue)
+move(5, 5, walk)

@@ -1,4 +1,5 @@
 import type { Model } from '../language/generated/ast.js';
+import { isMove, isTurn, isWait, isColor } from '../language/generated/ast.js';
 import { expandToNode, joinToNode, toString } from 'langium/generate';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
@@ -15,7 +16,14 @@ export function generateJavaScript(
   const fileNode = expandToNode`
         ${joinToNode(
           model.actions,
-          (action) => `move(${action.x}, ${action.y}, "${action.type}")`,
+          (action) => {
+            if (isMove(action))
+              return `move(${action.x}, ${action.y}, "${action.type}")`;
+            if (isTurn(action)) return `turn("${action.direction}")`;
+            if (isWait(action)) return `wait(${action.duration})`;
+            if (isColor(action)) return `color("${action.value}")`;
+            return '';
+          },
           { appendNewLineIfNotEmpty: true }
         )}
     `.appendNewLineIfNotEmpty();

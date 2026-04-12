@@ -15,11 +15,17 @@ export const setupConfigClassic = (): UserConfig => {
         languageId: 'chuchi',
         code: `begin(1, 0)
 move(1, 9, walk)
+turn(right)
 move(7, 10, jump)
+color(blue)
 move(5, 5, jump)
+wait(1)
+turn(down)
 move(3, 0, walk)
+color(green)
 move(10, 3, jump)
 move(3, 10, walk)
+turn(left)
 move(3, 3, jump)`,
         useDiffEditor: false,
         languageExtensionConfig: { id: 'langium' },
@@ -41,6 +47,7 @@ move(3, 3, jump)`,
           lineNumbersMinChars: 0,
           renderLineHighlight: 'none',
           fontSize: 16,
+          padding: { top: 16, bottom: 16 },
         },
       },
     },

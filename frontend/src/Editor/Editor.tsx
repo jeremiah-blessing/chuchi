@@ -2,21 +2,29 @@ import { useEffect, useRef } from 'react';
 import { configureMonacoWorkers } from './setupCommon';
 import { executeClassic } from './setupClassic';
 import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
+import * as monaco from 'monaco-editor';
 import { ICommand } from '../types';
+import { Theme } from '../theme';
 
 interface EditorProps {
   onCommands?: (commands: ICommand[]) => void;
+  theme?: Theme;
 }
 
-export const Editor = ({ onCommands = () => {} }: EditorProps) => {
+export const Editor = ({
+  onCommands = () => {},
+  theme = 'dark',
+}: EditorProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<MonacoEditorLanguageClientWrapper | null>(null);
+  const readyRef = useRef(false);
 
   useEffect(() => {
     const createEditor = async () => {
       configureMonacoWorkers();
       const editor = await executeClassic(containerRef.current!, onCommands);
       editorRef.current = editor;
+      readyRef.current = true;
     };
 
     createEditor();
@@ -26,7 +34,18 @@ export const Editor = ({ onCommands = () => {} }: EditorProps) => {
     };
   }, [onCommands]);
 
+  useEffect(() => {
+    if (readyRef.current) {
+      monaco.editor.setTheme(theme === 'dark' ? 'vs-dark' : 'vs');
+    }
+  }, [theme]);
+
   return (
-    <div className="w-full h-full p-6 bg-[#1E1E1E]" ref={containerRef}></div>
+    <div
+      className={`w-full h-full px-4 transition-colors duration-300 ${
+        theme === 'dark' ? 'bg-[#1E1E1E]' : 'bg-[#fffffe]'
+      }`}
+      ref={containerRef}
+    />
   );
 };
