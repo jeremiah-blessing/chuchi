@@ -1,6 +1,27 @@
-begin(0, 10)
-move(10, 10, jump)
-turn(right)
-wait(1)
-color(blue)
-move(5, 5, walk)
+warehouse:
+  size(20, 15)
+
+robot:
+  start at (0, 0) facing right
+
+objects:
+  shelf shelfA at (10, 2)
+  package package1 at (3, 4)
+  charger charger1 at (0, 14)
+
+obstacles:
+  from (8, 0) to (8, 4)
+
+waypoints:
+  home at (0, 0)
+
+tasks:
+  deliverPackage1:
+    goTo(package1)
+    pickup(package1)
+    goTo(shelfA)
+    load(shelfA)
+
+  returnHome:
+    goTo(home)
+    charge()
