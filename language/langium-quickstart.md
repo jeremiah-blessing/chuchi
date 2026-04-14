@@ -7,10 +7,10 @@ This folder contains all necessary files for your language extension.
 - `package.json` - the manifest file in which you declare your language support.
 - `language-configuration.json` - the language configuration used in the VS Code editor, defining the tokens that are used for comments and brackets.
 - `src/extension/main.ts` - the main code of the extension, which is responsible for launching a language server and client.
-- `src/language/chuchi.langium` - the grammar definition of your language.
+- `src/language/chochi.langium` - the grammar definition of your language.
 - `src/language/main.ts` - the entry point of the language server process.
-- `src/language/chuchi-module.ts` - the dependency injection module of your language implementation. Use this to register overridden and added services.
-- `src/language/chuchi-validator.ts` - an example validator. You should change it to reflect the semantics of your language.
+- `src/language/chochi-module.ts` - the dependency injection module of your language implementation. Use this to register overridden and added services.
+- `src/language/chochi-validator.ts` - an example validator. You should change it to reflect the semantics of your language.
 - `src/cli/main.ts` - the entry point of the command line interface (CLI) of your language.
 - `src/cli/generator.ts` - the code generator used by the CLI to write output files from DSL documents.
 - `src/cli/cli-util.ts` - utility code for the CLI.

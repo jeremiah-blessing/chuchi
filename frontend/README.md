@@ -1,1 +1,1 @@
-# Frontend For Chuchi
+# Frontend For Chochi

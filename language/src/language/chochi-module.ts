@@ -8,20 +8,20 @@ import {
   type PartialLangiumServices,
 } from 'langium/lsp';
 import {
-  ChuchiGeneratedModule,
-  ChuchiGeneratedSharedModule,
+  ChochiGeneratedModule,
+  ChochiGeneratedSharedModule,
 } from './generated/module.js';
 import {
-  ChuchiValidator,
+  ChochiValidator,
   registerValidationChecks,
-} from './chuchi-validator.js';
+} from './chochi-validator.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
  */
-export type ChuchiAddedServices = {
+export type ChochiAddedServices = {
   validation: {
-    ChuchiValidator: ChuchiValidator;
+    ChochiValidator: ChochiValidator;
   };
 };
 
@@ -29,19 +29,19 @@ export type ChuchiAddedServices = {
  * Union of Langium default services and your custom services - use this as constructor parameter
  * of custom service classes.
  */
-export type ChuchiServices = LangiumServices & ChuchiAddedServices;
+export type ChochiServices = LangiumServices & ChochiAddedServices;
 
 /**
  * Dependency injection module that overrides Langium default services and contributes the
  * declared custom services. The Langium defaults can be partially specified to override only
  * selected services, while the custom services must be fully specified.
  */
-export const ChuchiModule: Module<
-  ChuchiServices,
-  PartialLangiumServices & ChuchiAddedServices
+export const ChochiModule: Module<
+  ChochiServices,
+  PartialLangiumServices & ChochiAddedServices
 > = {
   validation: {
-    ChuchiValidator: () => new ChuchiValidator(),
+    ChochiValidator: () => new ChochiValidator(),
   },
 };
 
@@ -60,25 +60,25 @@ export const ChuchiModule: Module<
  * @param context Optional module context with the LSP connection
  * @returns An object wrapping the shared services and the language-specific services
  */
-export function createChuchiServices(context: DefaultSharedModuleContext): {
+export function createChochiServices(context: DefaultSharedModuleContext): {
   shared: LangiumSharedServices;
-  Chuchi: ChuchiServices;
+  Chochi: ChochiServices;
 } {
   const shared = inject(
     createDefaultSharedModule(context),
-    ChuchiGeneratedSharedModule
+    ChochiGeneratedSharedModule
   );
-  const Chuchi = inject(
+  const Chochi = inject(
     createDefaultModule({ shared }),
-    ChuchiGeneratedModule,
-    ChuchiModule
+    ChochiGeneratedModule,
+    ChochiModule
   );
-  shared.ServiceRegistry.register(Chuchi);
-  registerValidationChecks(Chuchi);
+  shared.ServiceRegistry.register(Chochi);
+  registerValidationChecks(Chochi);
   if (!context.connection) {
     // We don't run inside a language server
     // Therefore, initialize the configuration provider instantly
     shared.workspace.ConfigurationProvider.initialized({});
   }
-  return { shared, Chuchi };
+  return { shared, Chochi };
 }

@@ -1,11 +1,11 @@
 import { useCallback, useRef, useState } from 'react';
 import { Editor } from './Editor';
 import { Player } from './Player';
-import { ICommand } from './types';
+import { Scene } from './types';
 import { Theme, ThemeContext } from './theme';
 
 export const App = () => {
-  const [commands, setCommands] = useState<ICommand[]>([]);
+  const [scene, setScene] = useState<Scene | null>(null);
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [theme, setTheme] = useState<Theme>('dark');
@@ -59,7 +59,7 @@ export const App = () => {
                 />
               </svg>
             </div>
-            <span className="text-sm font-semibold tracking-wide">chuchi</span>
+            <span className="text-sm font-semibold tracking-wide">chochi</span>
             <span
               className={`text-[10px] px-1.5 py-0.5 rounded transition-colors duration-300 ${
                 isDark ? 'text-gray-500 bg-subtle' : 'text-gray-400 bg-gray-100'
@@ -212,14 +212,14 @@ export const App = () => {
               </span>
             </div>
             <div className="flex-1 min-h-0">
-              <Editor onCommands={setCommands} theme={theme} />
+              <Editor onScene={setScene} theme={theme} />
             </div>
           </div>
 
           {/* 3D Viewer panel */}
           <div className="flex-1 min-h-0">
             <Player
-              commands={commands}
+              scene={scene}
               timelineRef={timelineRef}
               onComplete={handleComplete}
             />
