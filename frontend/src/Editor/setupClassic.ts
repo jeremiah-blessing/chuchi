@@ -25,7 +25,7 @@ objects:
   charger charger1 at (0, 14)
 
 obstacles:
-  from (8, 0) to (8, 4)
+  from (8, 0) to (8, 1)
 
 waypoints:
   home at (0, 0)
@@ -38,8 +38,9 @@ tasks:
     load(shelfA)
 
   returnHome:
-    goTo(home)
-    charge()`,
+    goTo(charger1)
+    charge()
+    goTo(home)`,
         useDiffEditor: false,
         languageExtensionConfig: { id: 'langium' },
         languageDef: syntax,
