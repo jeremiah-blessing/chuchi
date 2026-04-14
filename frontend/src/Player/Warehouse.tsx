@@ -8,7 +8,17 @@ import {
   WaypointMarker,
 } from './sceneObjects';
 
-export const Warehouse = ({ scene }: { scene: Scene }) => {
+export const Warehouse = ({
+  scene,
+  hiddenPackages,
+  shelfContents,
+  isDark,
+}: {
+  scene: Scene;
+  hiddenPackages: Set<string>;
+  shelfContents: Map<string, string[]>;
+  isDark: boolean;
+}) => {
   const { width, height } = scene.warehouse;
 
   return (
@@ -19,7 +29,7 @@ export const Warehouse = ({ scene }: { scene: Scene }) => {
         receiveShadow
       >
         <planeGeometry args={[width + 2, height + 2]} />
-        <meshStandardMaterial color="#1f2333" />
+        <meshStandardMaterial color={isDark ? '#1f2333' : '#e5e7eb'} />
       </mesh>
 
       <Grid
@@ -27,10 +37,10 @@ export const Warehouse = ({ scene }: { scene: Scene }) => {
         args={[width, height]}
         cellSize={1}
         cellThickness={1}
-        cellColor="#2a2e3d"
+        cellColor={isDark ? '#2a2e3d' : '#cbd5e1'}
         sectionSize={5}
         sectionThickness={1.5}
-        sectionColor="#3a3f52"
+        sectionColor={isDark ? '#3a3f52' : '#94a3b8'}
         fadeDistance={Math.max(width, height) * 3}
         fadeStrength={1}
         infiniteGrid={false}
@@ -41,8 +51,14 @@ export const Warehouse = ({ scene }: { scene: Scene }) => {
       ))}
 
       {scene.objects.map((o) => {
-        if (o.kind === 'shelf') return <Shelf key={o.name} obj={o} />;
-        if (o.kind === 'package') return <Package key={o.name} obj={o} />;
+        if (o.kind === 'shelf')
+          return (
+            <Shelf key={o.name} obj={o} loaded={shelfContents.get(o.name)} />
+          );
+        if (o.kind === 'package') {
+          if (hiddenPackages.has(o.name)) return null;
+          return <Package key={o.name} obj={o} />;
+        }
         return <Charger key={o.name} obj={o} />;
       })}
 

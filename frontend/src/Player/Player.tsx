@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Environment,
   OrbitControls,
@@ -9,8 +9,9 @@ import { Canvas } from '@react-three/fiber';
 import { Group } from 'three';
 import { Scene, WarehouseCommand } from '../types';
 import { Warehouse } from './Warehouse';
-import { simulate } from './simulation';
+import { simulate, SimulationResult } from './simulation';
 import { buildRobotTimeline } from './robotAnimation';
+import { useTheme } from '../theme';
 
 const formatCommand = (cmd: WarehouseCommand): string => {
   switch (cmd.type) {
@@ -44,12 +45,67 @@ export const Player = ({
   timelineRef: React.MutableRefObject<gsap.core.Timeline | null>;
   onComplete: () => void;
 }) => {
+  const theme = useTheme();
+  const isDark = theme === 'dark';
   const [activeCommandIndex, setActiveCommandIndex] = useState(0);
   const [runtimeError, setRuntimeError] = useState<string | null>(null);
 
-  if (!scene) {
+  const simulation = useMemo<SimulationResult | null>(
+    () => (scene ? simulate(scene) : null),
+    [scene]
+  );
+
+  useEffect(() => {
+    setRuntimeError(simulation?.error ? simulation.error.message : null);
+  }, [simulation]);
+
+  const { carryingName, hiddenPackages, shelfContents } = useMemo(() => {
+    const hidden = new Set<string>();
+    const contents = new Map<string, string[]>();
+    let carrying: string | null = null;
+    if (!simulation)
+      return {
+        carryingName: null,
+        hiddenPackages: hidden,
+        shelfContents: contents,
+      };
+
+    for (const step of simulation.steps) {
+      if (step.commandIndex > activeCommandIndex) break;
+      const cmd = step.command;
+      if (cmd.type === 'pickup') {
+        hidden.add(cmd.name);
+        carrying = cmd.name;
+      } else if (cmd.type === 'drop') {
+        carrying = null;
+      } else if (cmd.type === 'load' && carrying) {
+        const list = contents.get(cmd.name) ?? [];
+        list.push(carrying);
+        contents.set(cmd.name, list);
+        carrying = null;
+      } else if (cmd.type === 'unload') {
+        const list = contents.get(cmd.name) ?? [];
+        const pkg = list.pop();
+        if (pkg) {
+          contents.set(cmd.name, list);
+          carrying = pkg;
+        }
+      }
+    }
+    return {
+      carryingName: carrying,
+      hiddenPackages: hidden,
+      shelfContents: contents,
+    };
+  }, [simulation, activeCommandIndex]);
+
+  if (!scene || !simulation) {
     return (
-      <div className="w-full h-full flex items-center justify-center text-gray-400">
+      <div
+        className={`w-full h-full flex items-center justify-center ${
+          isDark ? 'text-gray-400' : 'text-gray-500'
+        }`}
+      >
         Edit a program to see the warehouse.
       </div>
     );
@@ -61,12 +117,26 @@ export const Player = ({
     <div className="w-full h-full relative">
       {activeCommand && (
         <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10">
-          <div className="px-3 py-1.5 rounded-lg bg-gray-900/75 border border-white/10 backdrop-blur-sm">
+          <div
+            className={`px-3 py-1.5 rounded-lg border backdrop-blur-sm ${
+              isDark
+                ? 'bg-gray-900/75 border-white/10'
+                : 'bg-white/85 border-gray-300'
+            }`}
+          >
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-medium uppercase tracking-wider font-mono text-gray-400">
+              <span
+                className={`text-[10px] font-medium uppercase tracking-wider font-mono ${
+                  isDark ? 'text-gray-400' : 'text-gray-500'
+                }`}
+              >
                 {activeCommandIndex + 1}/{scene.commands.length}
               </span>
-              <code className="text-sm font-mono text-white">
+              <code
+                className={`text-sm font-mono ${
+                  isDark ? 'text-white' : 'text-gray-900'
+                }`}
+              >
                 {formatCommand(activeCommand)}
               </code>
             </div>
@@ -76,8 +146,18 @@ export const Player = ({
 
       {runtimeError && (
         <div className="absolute top-14 left-1/2 -translate-x-1/2 z-10">
-          <div className="px-3 py-1.5 rounded-lg bg-red-900/80 border border-red-500/40">
-            <code className="text-sm font-mono text-red-100">
+          <div
+            className={`px-3 py-1.5 rounded-lg border ${
+              isDark
+                ? 'bg-red-900/80 border-red-500/40'
+                : 'bg-red-100 border-red-400'
+            }`}
+          >
+            <code
+              className={`text-sm font-mono ${
+                isDark ? 'text-red-100' : 'text-red-800'
+              }`}
+            >
               {runtimeError}
             </code>
           </div>
@@ -96,24 +176,30 @@ export const Player = ({
           zoom: 40,
         }}
       >
-        <color attach="background" args={['#1a1d2e']} />
-        <ambientLight intensity={0.35} />
+        <color attach="background" args={[isDark ? '#1a1d2e' : '#eef2f7']} />
+        <ambientLight intensity={isDark ? 0.35 : 0.7} />
         <directionalLight
           position={[20, 30, 20]}
-          intensity={1.1}
+          intensity={isDark ? 1.1 : 1.3}
           castShadow
           shadow-mapSize-width={2048}
           shadow-mapSize-height={2048}
         />
 
-        <Warehouse scene={scene} />
+        <Warehouse
+          scene={scene}
+          hiddenPackages={hiddenPackages}
+          shelfContents={shelfContents}
+          isDark={isDark}
+        />
 
         <RobotActor
           scene={scene}
+          simulation={simulation}
           timelineRef={timelineRef}
           onComplete={onComplete}
           onCommandIndex={setActiveCommandIndex}
-          onRuntimeError={setRuntimeError}
+          carryingName={carryingName}
         />
 
         <OrbitControls
@@ -135,23 +221,22 @@ export const Player = ({
 
 const RobotActor = ({
   scene,
+  simulation,
   timelineRef,
   onComplete,
   onCommandIndex,
-  onRuntimeError,
+  carryingName,
 }: {
   scene: Scene;
+  simulation: SimulationResult;
   timelineRef: React.MutableRefObject<gsap.core.Timeline | null>;
   onComplete: () => void;
   onCommandIndex: (index: number) => void;
-  onRuntimeError: (msg: string | null) => void;
+  carryingName: string | null;
 }) => {
   const groupRef = useRef<Group>(null!);
 
   useEffect(() => {
-    const simulation = simulate(scene);
-    onRuntimeError(simulation.error ? simulation.error.message : null);
-
     const tl = buildRobotTimeline({
       scene,
       simulation,
@@ -166,7 +251,7 @@ const RobotActor = ({
       tl.kill();
       timelineRef.current = null;
     };
-  }, [scene, timelineRef, onComplete, onCommandIndex, onRuntimeError]);
+  }, [scene, simulation, timelineRef, onComplete, onCommandIndex]);
 
   return (
     <group ref={groupRef}>
@@ -189,6 +274,17 @@ const RobotActor = ({
           emissiveIntensity={1}
         />
       </Sphere>
+      {carryingName && (
+        <RoundedBox
+          args={[0.4, 0.4, 0.4]}
+          position={[0, 0.6, 0]}
+          radius={0.03}
+          smoothness={4}
+          castShadow
+        >
+          <meshStandardMaterial color="#c49a6c" />
+        </RoundedBox>
+      )}
     </group>
   );
 };

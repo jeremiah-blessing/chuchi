@@ -4,6 +4,7 @@ import {
 } from 'monaco-editor-wrapper';
 import { configureWorker, defineUserServices } from './setupCommon.js';
 import { syntax } from './syntax.js';
+import { registerChuchiThemes } from './theme.js';
 import { Scene } from '../types.js';
 
 export const setupConfigClassic = (): UserConfig => {
@@ -46,7 +47,7 @@ tasks:
         languageDef: syntax,
         editorOptions: {
           'semanticHighlighting.enabled': true,
-          theme: 'vs-dark',
+          theme: 'chuchi-dark',
           minimap: { enabled: false },
           scrollbar: {
             vertical: 'hidden',
@@ -76,6 +77,9 @@ export const executeClassic = async (
   const userConfig = setupConfigClassic();
   const wrapper = new MonacoEditorLanguageClientWrapper();
   await wrapper.initAndStart(userConfig, htmlElement);
+  registerChuchiThemes();
+  const monaco = await import('monaco-editor');
+  monaco.editor.setTheme('chuchi-dark');
 
   const client = wrapper.getLanguageClient();
 

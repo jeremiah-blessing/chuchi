@@ -1,7 +1,14 @@
-import { RoundedBox, Text } from '@react-three/drei';
+import { Billboard, RoundedBox, Text } from '@react-three/drei';
 import { WarehouseObject, ObstacleCell, Waypoint } from '../types';
+import { useTheme } from '../theme';
 
-export const Shelf = ({ obj }: { obj: WarehouseObject }) => (
+export const Shelf = ({
+  obj,
+  loaded = [],
+}: {
+  obj: WarehouseObject;
+  loaded?: string[];
+}) => (
   <group position={[obj.x, 0, obj.y]}>
     {[
       [-0.35, 0.25, -0.35],
@@ -23,7 +30,19 @@ export const Shelf = ({ obj }: { obj: WarehouseObject }) => (
     >
       <meshStandardMaterial color="#a67c52" />
     </RoundedBox>
-    <NameTag name={obj.name} yOffset={0.75} />
+    {loaded.map((name, i) => (
+      <RoundedBox
+        key={name}
+        args={[0.4, 0.4, 0.4]}
+        position={[0, 0.84 + i * 0.42, 0]}
+        radius={0.03}
+        smoothness={4}
+        castShadow
+      >
+        <meshStandardMaterial color="#c49a6c" />
+      </RoundedBox>
+    ))}
+    <NameTag name={obj.name} yOffset={1.0 + loaded.length * 0.42} />
   </group>
 );
 
@@ -38,7 +57,7 @@ export const Package = ({ obj }: { obj: WarehouseObject }) => (
     >
       <meshStandardMaterial color="#c49a6c" />
     </RoundedBox>
-    <NameTag name={obj.name} yOffset={0.55} />
+    <NameTag name={obj.name} yOffset={0.8} />
   </group>
 );
 
@@ -56,7 +75,7 @@ export const Charger = ({ obj }: { obj: WarehouseObject }) => (
       <cylinderGeometry args={[0.08, 0.08, 0.25, 12]} />
       <meshStandardMaterial color="#444" />
     </mesh>
-    <NameTag name={obj.name} yOffset={0.5} />
+    <NameTag name={obj.name} yOffset={0.75} />
   </group>
 );
 
@@ -73,26 +92,37 @@ export const WaypointMarker = ({ waypoint }: { waypoint: Waypoint }) => (
       <ringGeometry args={[0.3, 0.42, 24]} />
       <meshBasicMaterial color="#60a5fa" transparent opacity={0.6} />
     </mesh>
-    <NameTag name={waypoint.name} yOffset={0.1} color="#60a5fa" />
+    <NameTag name={waypoint.name} yOffset={0.3} color="#60a5fa" />
   </group>
 );
 
 const NameTag = ({
   name,
   yOffset,
-  color = '#e5e7eb',
+  color,
 }: {
   name: string;
   yOffset: number;
   color?: string;
-}) => (
-  <Text
-    position={[0, yOffset, 0]}
-    fontSize={0.18}
-    color={color}
-    anchorX="center"
-    anchorY="middle"
-  >
-    {name}
-  </Text>
-);
+}) => {
+  const theme = useTheme();
+  const isDark = theme === 'dark';
+  const fill = color ?? (isDark ? '#ffffff' : '#111827');
+  const outline = isDark ? '#000000' : '#ffffff';
+  return (
+    <Billboard position={[0, yOffset, 0]}>
+      <Text
+        fontSize={0.28}
+        color={fill}
+        anchorX="center"
+        anchorY="middle"
+        fontWeight="bold"
+        outlineWidth={0.03}
+        outlineColor={outline}
+        outlineOpacity={0.9}
+      >
+        {name}
+      </Text>
+    </Billboard>
+  );
+};
