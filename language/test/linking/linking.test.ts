@@ -1,14 +1,14 @@
 import { beforeAll, describe, expect, test } from 'vitest';
 import { EmptyFileSystem } from 'langium';
 import { parseHelper } from 'langium/test';
-import { createChuchiServices } from '../../src/language/chuchi-module.js';
+import { createChochiServices } from '../../src/language/chochi-module.js';
 import { Model } from '../../src/language/generated/ast.js';
 
 let parse: ReturnType<typeof parseHelper<Model>>;
 
 beforeAll(async () => {
-  const services = createChuchiServices(EmptyFileSystem);
-  parse = parseHelper<Model>(services.Chuchi);
+  const services = createChochiServices(EmptyFileSystem);
+  parse = parseHelper<Model>(services.Chochi);
 });
 
 describe('Linking', () => {

@@ -2,7 +2,7 @@
 
 ## Overview
 
-Redesign the Chuchi language from a flat list of movement commands into a structured DSL for describing a warehouse environment and a robot that navigates it. The language sets up the environment (warehouse, robot, objects, obstacles, waypoints) and then defines named task blocks that the robot executes sequentially. Validation runs both at parse time (static) and during playback (simulation).
+Redesign the Chochi language from a flat list of movement commands into a structured DSL for describing a warehouse environment and a robot that navigates it. The language sets up the environment (warehouse, robot, objects, obstacles, waypoints) and then defines named task blocks that the robot executes sequentially. Validation runs both at parse time (static) and during playback (simulation).
 
 ## Goals
 

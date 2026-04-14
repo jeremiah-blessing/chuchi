@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Replace Chuchi's flat command DSL with a sectioned warehouse-robot language (warehouse/robot/objects/obstacles/waypoints/tasks) and update the 3D Player to render the warehouse and simulate the new verbs with runtime validation.
+**Goal:** Replace Chochi's flat command DSL with a sectioned warehouse-robot language (warehouse/robot/objects/obstacles/waypoints/tasks) and update the 3D Player to render the warehouse and simulate the new verbs with runtime validation.
 
 **Architecture:**
 
@@ -26,11 +26,11 @@ Design spec: [`docs/superpowers/specs/2026-04-14-warehouse-robot-dsl-design.md`]
 
 | File                                          | Responsibility                                                    |
 | --------------------------------------------- | ----------------------------------------------------------------- | -------------------------- |
-| `language/src/language/chuchi.langium`        | Grammar: six top-level sections, verbs, named refs                |
-| `language/src/language/chuchi-validator.ts`   | Static validations (bounds, refs, types, uniqueness, collisions)  |
-| `language/src/language/chuchi-generator.ts`   | Build the `Scene` JSON from the AST                               |
+| `language/src/language/chochi.langium`        | Grammar: six top-level sections, verbs, named refs                |
+| `language/src/language/chochi-validator.ts`   | Static validations (bounds, refs, types, uniqueness, collisions)  |
+| `language/src/language/chochi-generator.ts`   | Build the `Scene` JSON from the AST                               |
 | `language/src/language/main-browser.ts`       | Publish `Scene` (not a command array) to the frontend             |
-| `language/samples/hello-world.chuchi`         | New-style sample program                                          |
+| `language/samples/hello-world.chochi`         | New-style sample program                                          |
 | `language/test/parsing/parsing.test.ts`       | Parsing tests for the new grammar                                 |
 | `language/test/validating/validating.test.ts` | Validation tests                                                  |
 | `language/test/linking/linking.test.ts`       | Cross-reference / linking tests (new names)                       |
@@ -121,7 +121,7 @@ export interface Scene {
 
 **Files:**
 
-- Modify: `language/src/language/chuchi.langium`
+- Modify: `language/src/language/chochi.langium`
 
 - [ ] **Step 1: Write a failing parser test for the new grammar**
 
@@ -131,15 +131,15 @@ Open `language/test/parsing/parsing.test.ts` and replace its contents with:
 import { beforeAll, describe, expect, test } from 'vitest';
 import { EmptyFileSystem } from 'langium';
 import { parseHelper } from 'langium/test';
-import { createChuchiServices } from '../../src/language/chuchi-module.js';
+import { createChochiServices } from '../../src/language/chochi-module.js';
 import { Model, isModel } from '../../src/language/generated/ast.js';
 
-let services: ReturnType<typeof createChuchiServices>;
+let services: ReturnType<typeof createChochiServices>;
 let parse: ReturnType<typeof parseHelper<Model>>;
 
 beforeAll(async () => {
-  services = createChuchiServices(EmptyFileSystem);
-  parse = parseHelper<Model>(services.Chuchi);
+  services = createChochiServices(EmptyFileSystem);
+  parse = parseHelper<Model>(services.Chochi);
 });
 
 describe('Parsing tests', () => {
@@ -257,10 +257,10 @@ Expected: tests fail (grammar does not yet match this shape).
 
 - [ ] **Step 3: Rewrite the grammar**
 
-Replace the entire contents of `language/src/language/chuchi.langium` with:
+Replace the entire contents of `language/src/language/chochi.langium` with:
 
 ```langium
-grammar Chuchi
+grammar Chochi
 
 entry Model:
     (warehouse=Warehouse
@@ -358,7 +358,7 @@ Expected: all 5 tests pass.
 - [ ] **Step 6: Commit**
 
 ```bash
-git add language/src/language/chuchi.langium language/src/language/generated language/test/parsing/parsing.test.ts
+git add language/src/language/chochi.langium language/src/language/generated language/test/parsing/parsing.test.ts
 git commit -m "feat(language): new grammar with warehouse/robot/objects/obstacles/waypoints/tasks sections"
 ```
 
@@ -372,8 +372,8 @@ The validator handles every **static** check listed in the spec.
 
 **Files:**
 
-- Modify: `language/src/language/chuchi-validator.ts`
-- Modify: `language/src/language/chuchi-module.ts` (only if registration changes)
+- Modify: `language/src/language/chochi-validator.ts`
+- Modify: `language/src/language/chochi-module.ts` (only if registration changes)
 
 - [ ] **Step 1: Write failing validation tests**
 
@@ -383,20 +383,18 @@ Replace the contents of `language/test/validating/validating.test.ts` with:
 import { beforeAll, describe, expect, test } from 'vitest';
 import { EmptyFileSystem } from 'langium';
 import { parseHelper } from 'langium/test';
-import { createChuchiServices } from '../../src/language/chuchi-module.js';
+import { createChochiServices } from '../../src/language/chochi-module.js';
 import { Model } from '../../src/language/generated/ast.js';
 
-let services: ReturnType<typeof createChuchiServices>;
-let parse: (
-  input: string
-) => Promise<{
+let services: ReturnType<typeof createChochiServices>;
+let parse: (input: string) => Promise<{
   diagnostics?: import('vscode-languageserver-types').Diagnostic[];
   parseResult: any;
 }>;
 
 beforeAll(async () => {
-  services = createChuchiServices(EmptyFileSystem);
-  const doParse = parseHelper<Model>(services.Chuchi);
+  services = createChochiServices(EmptyFileSystem);
+  const doParse = parseHelper<Model>(services.Chochi);
   parse = (input: string) => doParse(input, { validation: true });
 });
 
@@ -582,12 +580,12 @@ Expected: all new tests fail because the validator still references old AST type
 
 - [ ] **Step 3: Rewrite the validator**
 
-Replace the contents of `language/src/language/chuchi-validator.ts` with:
+Replace the contents of `language/src/language/chochi-validator.ts` with:
 
 ```ts
 import type { ValidationAcceptor, ValidationChecks } from 'langium';
 import type {
-  ChuchiAstType,
+  ChochiAstType,
   Model,
   WarehouseObject,
   Waypoint,
@@ -603,12 +601,12 @@ import {
   isWarehouseObject,
   isWaypoint,
 } from './generated/ast.js';
-import type { ChuchiServices } from './chuchi-module.js';
+import type { ChochiServices } from './chochi-module.js';
 
-export function registerValidationChecks(services: ChuchiServices) {
+export function registerValidationChecks(services: ChochiServices) {
   const registry = services.validation.ValidationRegistry;
-  const validator = services.validation.ChuchiValidator;
-  const checks: ValidationChecks<ChuchiAstType> = {
+  const validator = services.validation.ChochiValidator;
+  const checks: ValidationChecks<ChochiAstType> = {
     Model: validator.checkModel,
     GoTo: validator.checkGoTo,
     Pickup: validator.checkPickupIsPackage,
@@ -618,7 +616,7 @@ export function registerValidationChecks(services: ChuchiServices) {
   registry.register(checks, validator);
 }
 
-export class ChuchiValidator {
+export class ChochiValidator {
   checkModel = (model: Model, accept: ValidationAcceptor): void => {
     // Required sections
     if (!model.warehouse) {
@@ -849,7 +847,7 @@ Expected: all tests pass.
 - [ ] **Step 6: Commit**
 
 ```bash
-git add language/src/language/chuchi-validator.ts language/test/validating/validating.test.ts
+git add language/src/language/chochi-validator.ts language/test/validating/validating.test.ts
 git commit -m "feat(language): static validations for warehouse DSL"
 ```
 
@@ -861,7 +859,7 @@ git commit -m "feat(language): static validations for warehouse DSL"
 
 **Files:**
 
-- Modify: `language/src/language/chuchi-generator.ts`
+- Modify: `language/src/language/chochi-generator.ts`
 
 - [ ] **Step 1: Add a test harness for the generator**
 
@@ -871,15 +869,15 @@ Create `language/test/generator/generator.test.ts` with:
 import { beforeAll, describe, expect, test } from 'vitest';
 import { EmptyFileSystem } from 'langium';
 import { parseHelper } from 'langium/test';
-import { createChuchiServices } from '../../src/language/chuchi-module.js';
+import { createChochiServices } from '../../src/language/chochi-module.js';
 import { Model } from '../../src/language/generated/ast.js';
-import { generateScene } from '../../src/language/chuchi-generator.js';
+import { generateScene } from '../../src/language/chochi-generator.js';
 
 let parse: ReturnType<typeof parseHelper<Model>>;
 
 beforeAll(async () => {
-  const services = createChuchiServices(EmptyFileSystem);
-  parse = parseHelper<Model>(services.Chuchi);
+  const services = createChochiServices(EmptyFileSystem);
+  parse = parseHelper<Model>(services.Chochi);
 });
 
 describe('generateScene', () => {
@@ -987,7 +985,7 @@ Expected: fails — `generateScene` is not exported.
 
 - [ ] **Step 3: Rewrite the generator**
 
-Replace the contents of `language/src/language/chuchi-generator.ts` with:
+Replace the contents of `language/src/language/chochi-generator.ts` with:
 
 ```ts
 import {
@@ -1126,7 +1124,7 @@ Expected: all 3 tests pass.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add language/src/language/chuchi-generator.ts language/test/generator/generator.test.ts
+git add language/src/language/chochi-generator.ts language/test/generator/generator.test.ts
 git commit -m "feat(language): generate Scene JSON from AST"
 ```
 
@@ -1138,11 +1136,11 @@ git commit -m "feat(language): generate Scene JSON from AST"
 
 - [ ] **Step 1: Update the worker**
 
-Open `language/src/language/main-browser.ts` and replace the `generateChuchiCommands` import + the property it injects:
+Open `language/src/language/main-browser.ts` and replace the `generateChochiCommands` import + the property it injects:
 
 ```ts
 // change import
-import { generateScene } from './chuchi-generator.js';
+import { generateScene } from './chochi-generator.js';
 
 // in the onBuildPhase callback, replace the $commands assignment with:
 (module as unknown as { $scene: ReturnType<typeof generateScene> }).$scene =
@@ -1154,12 +1152,12 @@ Keep everything else identical. The notification shape is unchanged (the scene i
 - [ ] **Step 2: Build the worker**
 
 Run: `npm run generate:worker`
-Expected: completes without errors, writes `frontend/public/chuchiWorker.js`.
+Expected: completes without errors, writes `frontend/public/chochiWorker.js`.
 
 - [ ] **Step 3: Commit**
 
 ```bash
-git add language/src/language/main-browser.ts frontend/public/chuchiWorker.js
+git add language/src/language/main-browser.ts frontend/public/chochiWorker.js
 git commit -m "feat(language): publish Scene from worker instead of flat commands"
 ```
 
@@ -1167,11 +1165,11 @@ git commit -m "feat(language): publish Scene from worker instead of flat command
 
 **Files:**
 
-- Modify: `language/samples/hello-world.chuchi`
+- Modify: `language/samples/hello-world.chochi`
 
 - [ ] **Step 1: Write a new sample**
 
-Replace the contents of `language/samples/hello-world.chuchi` with:
+Replace the contents of `language/samples/hello-world.chochi` with:
 
 ```
 warehouse:
@@ -1206,7 +1204,7 @@ tasks:
 - [ ] **Step 2: Commit**
 
 ```bash
-git add language/samples/hello-world.chuchi
+git add language/samples/hello-world.chochi
 git commit -m "chore(language): update sample to warehouse DSL"
 ```
 
@@ -2240,7 +2238,7 @@ Expected: succeeds.
 - [ ] **Step 3: Run the dev server and smoke-test the sample program**
 
 Run: `npm --workspace frontend run dev`
-Open the dev URL, paste the updated `language/samples/hello-world.chuchi` into the editor. Expect:
+Open the dev URL, paste the updated `language/samples/hello-world.chochi` into the editor. Expect:
 
 - A 20×15 warehouse with floor + grid
 - A shelf labelled `shelfA`, a package `package1`, a charger `charger1`, a waypoint ring at `home`
@@ -2273,14 +2271,14 @@ Replace `language/test/linking/linking.test.ts` with:
 import { beforeAll, describe, expect, test } from 'vitest';
 import { EmptyFileSystem } from 'langium';
 import { parseHelper } from 'langium/test';
-import { createChuchiServices } from '../../src/language/chuchi-module.js';
+import { createChochiServices } from '../../src/language/chochi-module.js';
 import { Model } from '../../src/language/generated/ast.js';
 
 let parse: ReturnType<typeof parseHelper<Model>>;
 
 beforeAll(async () => {
-  const services = createChuchiServices(EmptyFileSystem);
-  parse = parseHelper<Model>(services.Chuchi);
+  const services = createChochiServices(EmptyFileSystem);
+  parse = parseHelper<Model>(services.Chochi);
 });
 
 describe('Linking', () => {

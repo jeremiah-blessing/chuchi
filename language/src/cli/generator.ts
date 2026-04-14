@@ -1,5 +1,5 @@
 import type { Model } from '../language/generated/ast.js';
-import { generateScene } from '../language/chuchi-generator.js';
+import { generateScene } from '../language/chochi-generator.js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { extractDestinationAndName } from './cli-util.js';

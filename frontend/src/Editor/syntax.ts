@@ -29,25 +29,25 @@ export const syntax = {
         regex: /[_a-zA-Z][\w_]*/,
         action: {
           cases: {
-            '@sections': { token: 'keyword.section.chuchi' },
-            '@commands': { token: 'keyword.command.chuchi' },
-            '@kinds': { token: 'type.chuchi' },
-            '@directions': { token: 'constant.direction.chuchi' },
-            '@positional': { token: 'keyword.positional.chuchi' },
-            '@default': { token: 'identifier.chuchi' },
+            '@sections': { token: 'keyword.section.chochi' },
+            '@commands': { token: 'keyword.command.chochi' },
+            '@kinds': { token: 'type.chochi' },
+            '@directions': { token: 'constant.direction.chochi' },
+            '@positional': { token: 'keyword.positional.chochi' },
+            '@default': { token: 'identifier.chochi' },
           },
         },
       },
       {
         regex: /(?:(?:-?[0-9]+)?\.[0-9]+)|-?[0-9]+/,
-        action: { token: 'number.chuchi' },
+        action: { token: 'number.chochi' },
       },
       { include: '@whitespace' },
       {
         regex: /@symbols/,
         action: {
           cases: {
-            '@operators': { token: 'delimiter.chuchi' },
+            '@operators': { token: 'delimiter.chochi' },
             '@default': { token: '' },
           },
         },

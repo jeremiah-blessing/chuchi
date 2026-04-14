@@ -37,7 +37,7 @@ export const configureWorker = (): LanguageClientConfig => {
     new URL('./language/main-browser', import.meta.url),
     {
       type: 'module',
-      name: 'Chuchi Language Server',
+      name: 'Chochi Language Server',
     }
   );
 

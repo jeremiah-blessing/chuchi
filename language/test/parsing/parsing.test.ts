@@ -1,15 +1,15 @@
 import { beforeAll, describe, expect, test } from 'vitest';
 import { EmptyFileSystem } from 'langium';
 import { parseHelper } from 'langium/test';
-import { createChuchiServices } from '../../src/language/chuchi-module.js';
+import { createChochiServices } from '../../src/language/chochi-module.js';
 import { Model, isModel } from '../../src/language/generated/ast.js';
 
-let services: ReturnType<typeof createChuchiServices>;
+let services: ReturnType<typeof createChochiServices>;
 let parse: ReturnType<typeof parseHelper<Model>>;
 
 beforeAll(async () => {
-  services = createChuchiServices(EmptyFileSystem);
-  parse = parseHelper<Model>(services.Chuchi);
+  services = createChochiServices(EmptyFileSystem);
+  parse = parseHelper<Model>(services.Chochi);
 });
 
 describe('Parsing tests', () => {

@@ -3,7 +3,7 @@ import {
   UserConfig,
 } from 'monaco-editor-wrapper';
 import { configureWorker, defineUserServices } from './setupCommon.js';
-import monarchSyntax from './syntaxes/chuchi.monarch.js';
+import monarchSyntax from './syntaxes/chochi.monarch.js';
 
 export const setupConfigClassic = (): UserConfig => {
   return {
@@ -11,8 +11,8 @@ export const setupConfigClassic = (): UserConfig => {
       serviceConfig: defineUserServices(),
       editorAppConfig: {
         $type: 'classic',
-        languageId: 'chuchi',
-        code: `// Chuchi Sample Code
+        languageId: 'chochi',
+        code: `// Chochi Sample Code
 begin(1, 0)
 move(1, -9, jump)`,
         useDiffEditor: false,

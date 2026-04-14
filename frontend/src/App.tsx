@@ -59,7 +59,7 @@ export const App = () => {
                 />
               </svg>
             </div>
-            <span className="text-sm font-semibold tracking-wide">chuchi</span>
+            <span className="text-sm font-semibold tracking-wide">chochi</span>
             <span
               className={`text-[10px] px-1.5 py-0.5 rounded transition-colors duration-300 ${
                 isDark ? 'text-gray-500 bg-subtle' : 'text-gray-400 bg-gray-100'

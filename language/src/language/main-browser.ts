@@ -7,9 +7,9 @@ import {
   Diagnostic,
   NotificationType,
 } from 'vscode-languageserver/browser.js';
-import { createChuchiServices } from './chuchi-module.js';
+import { createChochiServices } from './chochi-module.js';
 import { Model } from './generated/ast.js';
-import { generateScene } from './chuchi-generator.js';
+import { generateScene } from './chochi-generator.js';
 
 declare const self: DedicatedWorkerGlobalScope;
 
@@ -18,12 +18,12 @@ const messageWriter = new BrowserMessageWriter(self);
 
 const connection = createConnection(messageReader, messageWriter);
 
-const { shared, Chuchi } = createChuchiServices({
+const { shared, Chochi } = createChochiServices({
   connection,
   ...EmptyFileSystem,
 });
 
-const jsonSerializer = Chuchi.serializer.JsonSerializer;
+const jsonSerializer = Chochi.serializer.JsonSerializer;
 type DocumentChange = {
   uri: string;
   content: string;

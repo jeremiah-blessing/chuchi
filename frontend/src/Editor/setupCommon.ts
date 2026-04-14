@@ -33,10 +33,10 @@ export const configureMonacoWorkers = () => {
 
 export const configureWorker = (): LanguageClientConfig => {
   const lsWorker = new Worker(
-    `${import.meta.env.DEV ? '' : '/chuchi'}/chuchiWorker.js`,
+    `${import.meta.env.DEV ? '' : '/chochi'}/chochiWorker.js`,
     {
       type: 'module',
-      name: 'Chuchi Language Server',
+      name: 'Chochi Language Server',
     }
   );
 

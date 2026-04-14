@@ -33,7 +33,7 @@ export const Editor = ({ onScene = () => {}, theme = 'dark' }: EditorProps) => {
 
   useEffect(() => {
     if (readyRef.current) {
-      monaco.editor.setTheme(theme === 'dark' ? 'chuchi-dark' : 'chuchi-light');
+      monaco.editor.setTheme(theme === 'dark' ? 'chochi-dark' : 'chochi-light');
     }
   }, [theme]);
 

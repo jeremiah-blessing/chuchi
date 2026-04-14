@@ -1,20 +1,18 @@
 import { beforeAll, describe, expect, test } from 'vitest';
 import { EmptyFileSystem } from 'langium';
 import { parseHelper } from 'langium/test';
-import { createChuchiServices } from '../../src/language/chuchi-module.js';
+import { createChochiServices } from '../../src/language/chochi-module.js';
 import { Model } from '../../src/language/generated/ast.js';
 
-let services: ReturnType<typeof createChuchiServices>;
-let parse: (
-  input: string
-) => Promise<{
+let services: ReturnType<typeof createChochiServices>;
+let parse: (input: string) => Promise<{
   diagnostics?: import('vscode-languageserver-types').Diagnostic[];
   parseResult: any;
 }>;
 
 beforeAll(async () => {
-  services = createChuchiServices(EmptyFileSystem);
-  const doParse = parseHelper<Model>(services.Chuchi);
+  services = createChochiServices(EmptyFileSystem);
+  const doParse = parseHelper<Model>(services.Chochi);
   parse = (input: string) => doParse(input, { validation: true });
 });
 

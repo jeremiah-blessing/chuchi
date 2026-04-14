@@ -1,4 +1,4 @@
-grammar Chuchi
+grammar Chochi
 
 entry Model:
     (warehouse=Warehouse

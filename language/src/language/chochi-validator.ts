@@ -1,6 +1,6 @@
 import type { ValidationAcceptor, ValidationChecks } from 'langium';
 import type {
-  ChuchiAstType,
+  ChochiAstType,
   Model,
   WarehouseObject,
   Waypoint,
@@ -15,12 +15,12 @@ import {
   isObstacleRect,
   isWarehouseObject,
 } from './generated/ast.js';
-import type { ChuchiServices } from './chuchi-module.js';
+import type { ChochiServices } from './chochi-module.js';
 
-export function registerValidationChecks(services: ChuchiServices) {
+export function registerValidationChecks(services: ChochiServices) {
   const registry = services.validation.ValidationRegistry;
-  const validator = services.validation.ChuchiValidator;
-  const checks: ValidationChecks<ChuchiAstType> = {
+  const validator = services.validation.ChochiValidator;
+  const checks: ValidationChecks<ChochiAstType> = {
     Model: validator.checkModel,
     GoTo: validator.checkGoTo,
     Pickup: validator.checkPickupIsPackage,
@@ -30,7 +30,7 @@ export function registerValidationChecks(services: ChuchiServices) {
   registry.register(checks, validator);
 }
 
-export class ChuchiValidator {
+export class ChochiValidator {
   checkModel = (model: Model, accept: ValidationAcceptor): void => {
     // Required sections
     if (!model.robot) {
