@@ -123,7 +123,7 @@ export class ChuchiValidator {
     // Obstacle cells: bounds (both endpoints of rectangles)
     for (const o of model.obstacles ?? []) {
       if (isObstacleCell(o)) {
-        if (!inBounds(o.x, o.y)) {
+        if (!inBounds(o.x!, o.y!)) {
           accept(
             'error',
             `Obstacle at (${o.x}, ${o.y}) is outside warehouse bounds.`,
@@ -131,7 +131,7 @@ export class ChuchiValidator {
           );
         }
       } else if (isObstacleRect(o)) {
-        if (!inBounds(o.x1, o.y1) || !inBounds(o.x2, o.y2)) {
+        if (!inBounds(o.x1!, o.y1!) || !inBounds(o.x2!, o.y2!)) {
           accept(
             'error',
             `Obstacle rectangle from (${o.x1}, ${o.y1}) to (${o.x2}, ${o.y2}) is outside warehouse bounds.`,
@@ -225,12 +225,12 @@ function expandObstacles(model: Model): Set<string> {
   const cells = new Set<string>();
   for (const o of model.obstacles ?? []) {
     if (isObstacleCell(o)) {
-      cells.add(cellKey(o.x, o.y));
+      cells.add(cellKey(o.x!, o.y!));
     } else if (isObstacleRect(o)) {
-      const xMin = Math.min(o.x1, o.x2);
-      const xMax = Math.max(o.x1, o.x2);
-      const yMin = Math.min(o.y1, o.y2);
-      const yMax = Math.max(o.y1, o.y2);
+      const xMin = Math.min(o.x1!, o.x2!);
+      const xMax = Math.max(o.x1!, o.x2!);
+      const yMin = Math.min(o.y1!, o.y2!);
+      const yMax = Math.max(o.y1!, o.y2!);
       for (let x = xMin; x <= xMax; x++) {
         for (let y = yMin; y <= yMax; y++) cells.add(cellKey(x, y));
       }

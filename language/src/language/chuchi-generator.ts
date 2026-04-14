@@ -55,14 +55,14 @@ export const generateScene = (model: Model): Scene => {
     objects: (model.objects ?? []).map((o) => ({
       name: o.name,
       kind: o.kind as Scene['objects'][number]['kind'],
-      x: o.x,
-      y: o.y,
+      x: o.x!,
+      y: o.y!,
     })),
     obstacles: expandObstacles(model),
     waypoints: (model.waypoints ?? []).map((w) => ({
       name: w.name,
-      x: w.x,
-      y: w.y,
+      x: w.x!,
+      y: w.y!,
     })),
     commands: (model.tasks ?? []).flatMap((task) =>
       task.steps.map(stepToCommand)
@@ -79,7 +79,7 @@ const stepToCommand = (step: any): Command => {
         target: { kind: 'named', name: step.targetRef.$refText },
       };
     }
-    return { type: 'goTo', target: { kind: 'coord', x: step.x, y: step.y } };
+    return { type: 'goTo', target: { kind: 'coord', x: step.x!, y: step.y! } };
   }
   if (isTurn(step)) {
     return { type: 'turn', direction: step.direction };
@@ -109,12 +109,12 @@ const expandObstacles = (model: Model): Scene['obstacles'] => {
   const out: Scene['obstacles'] = [];
   for (const o of model.obstacles ?? []) {
     if (isObstacleCell(o)) {
-      out.push({ x: o.x, y: o.y });
+      out.push({ x: o.x!, y: o.y! });
     } else if (isObstacleRect(o)) {
-      const xMin = Math.min(o.x1, o.x2);
-      const xMax = Math.max(o.x1, o.x2);
-      const yMin = Math.min(o.y1, o.y2);
-      const yMax = Math.max(o.y1, o.y2);
+      const xMin = Math.min(o.x1!, o.x2!);
+      const xMax = Math.max(o.x1!, o.x2!);
+      const yMin = Math.min(o.y1!, o.y2!);
+      const yMax = Math.max(o.y1!, o.y2!);
       for (let x = xMin; x <= xMax; x++) {
         for (let y = yMin; y <= yMax; y++) out.push({ x, y });
       }
