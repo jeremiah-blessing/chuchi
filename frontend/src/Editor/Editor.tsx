@@ -3,18 +3,15 @@ import { configureMonacoWorkers } from './setupCommon';
 import { executeClassic } from './setupClassic';
 import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
 import * as monaco from 'monaco-editor';
-import { ICommand } from '../types';
+import { Scene } from '../types';
 import { Theme } from '../theme';
 
 interface EditorProps {
-  onCommands?: (commands: ICommand[]) => void;
+  onScene?: (scene: Scene | null) => void;
   theme?: Theme;
 }
 
-export const Editor = ({
-  onCommands = () => {},
-  theme = 'dark',
-}: EditorProps) => {
+export const Editor = ({ onScene = () => {}, theme = 'dark' }: EditorProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<MonacoEditorLanguageClientWrapper | null>(null);
   const readyRef = useRef(false);
@@ -22,7 +19,7 @@ export const Editor = ({
   useEffect(() => {
     const createEditor = async () => {
       configureMonacoWorkers();
-      const editor = await executeClassic(containerRef.current!, onCommands);
+      const editor = await executeClassic(containerRef.current!, onScene);
       editorRef.current = editor;
       readyRef.current = true;
     };
@@ -32,7 +29,7 @@ export const Editor = ({
     return () => {
       editorRef.current?.dispose();
     };
-  }, [onCommands]);
+  }, [onScene]);
 
   useEffect(() => {
     if (readyRef.current) {

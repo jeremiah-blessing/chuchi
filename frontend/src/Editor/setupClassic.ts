@@ -4,7 +4,7 @@ import {
 } from 'monaco-editor-wrapper';
 import { configureWorker, defineUserServices } from './setupCommon.js';
 import { syntax } from './syntax.js';
-import { ICommand } from '../types.js';
+import { Scene } from '../types.js';
 
 export const setupConfigClassic = (): UserConfig => {
   return {
@@ -13,20 +13,33 @@ export const setupConfigClassic = (): UserConfig => {
       editorAppConfig: {
         $type: 'classic',
         languageId: 'chuchi',
-        code: `begin(1, 0)
-move(1, 9, walk)
-turn(right)
-move(7, 10, jump)
-color(blue)
-move(5, 5, jump)
-wait(1)
-turn(down)
-move(3, 0, walk)
-color(green)
-move(10, 3, jump)
-move(3, 10, walk)
-turn(left)
-move(3, 3, jump)`,
+        code: `warehouse:
+  size(20, 15)
+
+robot:
+  start at (0, 0) facing right
+
+objects:
+  shelf shelfA at (10, 2)
+  package package1 at (3, 4)
+  charger charger1 at (0, 14)
+
+obstacles:
+  from (8, 0) to (8, 4)
+
+waypoints:
+  home at (0, 0)
+
+tasks:
+  deliverPackage1:
+    goTo(package1)
+    pickup(package1)
+    goTo(shelfA)
+    load(shelfA)
+
+  returnHome:
+    goTo(home)
+    charge()`,
         useDiffEditor: false,
         languageExtensionConfig: { id: 'langium' },
         languageDef: syntax,
@@ -57,7 +70,7 @@ move(3, 3, jump)`,
 
 export const executeClassic = async (
   htmlElement: HTMLElement,
-  onCommands: (commands: ICommand[]) => void
+  onScene: (scene: Scene | null) => void
 ) => {
   const userConfig = setupConfigClassic();
   const wrapper = new MonacoEditorLanguageClientWrapper();
@@ -71,10 +84,13 @@ export const executeClassic = async (
 
   client.onNotification('browser/DocumentChange', (resp) => {
     const result = JSON.parse(resp.content);
-    const diagnosistics = resp.diagnostics as Array<unknown>;
+    const diagnostics = resp.diagnostics as Array<unknown>;
 
-    if (diagnosistics.length === 0) {
-      onCommands(result.$commands);
+    if (diagnostics.length === 0) {
+      const scene = (result.$scene as Scene | undefined) ?? null;
+      onScene(scene);
+    } else {
+      onScene(null);
     }
   });
 
