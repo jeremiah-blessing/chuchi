@@ -1,8 +1,8 @@
 import type { Model } from '../language/generated/ast.js';
 import chalk from 'chalk';
 import { Command } from 'commander';
-import { ChuchiLanguageMetaData } from '../language/generated/module.js';
-import { createChuchiServices } from '../language/chuchi-module.js';
+import { ChochiLanguageMetaData } from '../language/generated/module.js';
+import { createChochiServices } from '../language/chochi-module.js';
 import { extractAstNode } from './cli-util.js';
 import { generateJavaScript } from './generator.js';
 import { NodeFileSystem } from 'langium/node';
@@ -18,7 +18,7 @@ export const generateAction = async (
   fileName: string,
   opts: GenerateOptions
 ): Promise<void> => {
-  const services = createChuchiServices(NodeFileSystem).Chuchi;
+  const services = createChochiServices(NodeFileSystem).Chochi;
   const model = await extractAstNode<Model>(fileName, services);
   const generatedFilePath = generateJavaScript(
     model,
@@ -39,7 +39,7 @@ export default function (): void {
 
   program.version(JSON.parse(packageContent).version);
 
-  const fileExtensions = ChuchiLanguageMetaData.fileExtensions.join(', ');
+  const fileExtensions = ChochiLanguageMetaData.fileExtensions.join(', ');
   program
     .command('generate')
     .argument(

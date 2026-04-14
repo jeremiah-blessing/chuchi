@@ -11,8 +11,8 @@ export const setupConfigExtended = (): UserConfig => {
     new URL('../language-configuration.json', import.meta.url)
   );
   extensionFilesOrContents.set(
-    '/chuchi-grammar.json',
-    new URL('../syntaxes/chuchi.tmLanguage.json', import.meta.url)
+    '/chochi-grammar.json',
+    new URL('../syntaxes/chochi.tmLanguage.json', import.meta.url)
   );
 
   return {
@@ -20,13 +20,13 @@ export const setupConfigExtended = (): UserConfig => {
       serviceConfig: defineUserServices(),
       editorAppConfig: {
         $type: 'extended',
-        languageId: 'chuchi',
-        code: `// Chuchi is running in the web!`,
+        languageId: 'chochi',
+        code: `// Chochi is running in the web!`,
         useDiffEditor: false,
         extensions: [
           {
             config: {
-              name: 'chuchi-web',
+              name: 'chochi-web',
               publisher: 'generator-langium',
               version: '1.0.0',
               engines: {
@@ -35,16 +35,16 @@ export const setupConfigExtended = (): UserConfig => {
               contributes: {
                 languages: [
                   {
-                    id: 'chuchi',
-                    extensions: ['.chuchi'],
+                    id: 'chochi',
+                    extensions: ['.chochi'],
                     configuration: './language-configuration.json',
                   },
                 ],
                 grammars: [
                   {
-                    language: 'chuchi',
-                    scopeName: 'source.chuchi',
-                    path: './chuchi-grammar.json',
+                    language: 'chochi',
+                    scopeName: 'source.chochi',
+                    path: './chochi-grammar.json',
                   },
                 ],
               },

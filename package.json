@@ -1,10 +1,10 @@
 {
-  "name": "chuchi",
+  "name": "chochi",
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "generate:worker": "npm run langium:generate -w language && npm run build -w language && npm run build:worker -w language && cp language/public/chuchiWorker.js frontend/public/chuchiWorker.js",
+    "generate:worker": "npm run langium:generate -w language && npm run build -w language && npm run build:worker -w language && cp language/public/chochiWorker.js frontend/public/chochiWorker.js",
     "format": "prettier --check \"**/*.+(js|jsx|ts|tsx|json|yml|yaml|md|css|scss)\"",
     "format:fix": "prettier --write \"**/*.+(js|jsx|ts|tsx|json|yml|yaml|md|css|scss)\"",
     "prepare": "husky install"

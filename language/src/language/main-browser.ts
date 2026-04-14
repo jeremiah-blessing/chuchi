@@ -7,9 +7,9 @@ import {
   Diagnostic,
   NotificationType,
 } from 'vscode-languageserver/browser.js';
-import { createChuchiServices } from './chuchi-module.js';
+import { createChochiServices } from './chochi-module.js';
 import { Model } from './generated/ast.js';
-import { generateChuchiCommands } from './chuchi-generator.js';
+import { generateScene } from './chochi-generator.js';
 
 declare const self: DedicatedWorkerGlobalScope;
 
@@ -18,12 +18,12 @@ const messageWriter = new BrowserMessageWriter(self);
 
 const connection = createConnection(messageReader, messageWriter);
 
-const { shared, Chuchi } = createChuchiServices({
+const { shared, Chochi } = createChochiServices({
   connection,
   ...EmptyFileSystem,
 });
 
-const jsonSerializer = Chuchi.serializer.JsonSerializer;
+const jsonSerializer = Chochi.serializer.JsonSerializer;
 type DocumentChange = {
   uri: string;
   content: string;
@@ -40,10 +40,11 @@ shared.workspace.DocumentBuilder.onBuildPhase(
     for (const document of documents) {
       const module = document.parseResult.value as Model;
 
-      (module as unknown as { $commands: any[] }).$commands =
-        generateChuchiCommands(module);
+      (
+        module as unknown as { $scene: ReturnType<typeof generateScene> }
+      ).$scene = generateScene(module);
 
-      // inject the commands into the model
+      // inject the scene into the model
       // this is safe so long as you careful to not clobber existing properties
 
       // send the notification for this validated document,

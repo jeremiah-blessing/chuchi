@@ -1,5 +1,5 @@
 {
-  "name": "chuchi",
+  "name": "chochi",
   "description": "Please enter a brief description here",
   "version": "0.0.1",
   "files": [
@@ -17,7 +17,7 @@
     "langium:watch": "langium generate --watch",
     "vscode:prepublish": "npm run build && npm run lint",
     "build:web": "npm run build",
-    "build:worker": "esbuild --minify ./out/language/main-browser.js --bundle --format=iife --outfile=./public/chuchiWorker.js",
+    "build:worker": "esbuild --minify ./out/language/main-browser.js --bundle --format=iife --outfile=./public/chochiWorker.js",
     "bundle": "vite build",
     "bundle:serve": "http-server ./dist --port 5175",
     "dev": "vite",
@@ -57,7 +57,7 @@
     "node": "18.19.1",
     "npm": "10.2.4"
   },
-  "displayName": "chuchi",
+  "displayName": "chochi",
   "engines": {
     "vscode": "^1.67.0",
     "node": ">=18.0.0"
@@ -68,30 +68,30 @@
   "contributes": {
     "languages": [
       {
-        "id": "chuchi",
+        "id": "chochi",
         "aliases": [
-          "Chuchi",
-          "chuchi"
+          "Chochi",
+          "chochi"
         ],
         "extensions": [
-          ".chuchi"
+          ".chochi"
         ],
         "configuration": "./language-configuration.json"
       }
     ],
     "grammars": [
       {
-        "language": "chuchi",
-        "scopeName": "source.chuchi",
-        "path": "syntaxes/chuchi.tmLanguage.json"
+        "language": "chochi",
+        "scopeName": "source.chochi",
+        "path": "syntaxes/chochi.tmLanguage.json"
       }
     ]
   },
   "activationEvents": [
-    "onLanguage:chuchi"
+    "onLanguage:chochi"
   ],
   "main": "./out/extension/main.cjs",
   "bin": {
-    "chuchi-cli": "./bin/cli.js"
+    "chochi-cli": "./bin/cli.js"
   }
 }
