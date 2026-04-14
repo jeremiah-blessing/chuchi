@@ -10,9 +10,11 @@ import {
 } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import {
+  AdditiveBlending,
   Color,
   Group,
   Mesh,
+  MeshBasicMaterial,
   MeshStandardMaterial,
   PointLight as PointLightType,
   Vector3,
@@ -39,7 +41,6 @@ const sceneThemes = {
     ambientIntensity: 0.3,
     directionalIntensity: 1,
     envIntensity: 0.4,
-    dustColor: '#c8b8a8',
     overlayBg: 'bg-gray-900/75 border-white/10',
     overlayCounter: 'text-gray-400',
     overlayCode: 'text-white',
@@ -55,7 +56,6 @@ const sceneThemes = {
     ambientIntensity: 0.4,
     directionalIntensity: 1.2,
     envIntensity: 0.5,
-    dustColor: '#c8b8a8',
     overlayBg: 'bg-white/85 border-gray-200',
     overlayCounter: 'text-gray-500',
     overlayCode: 'text-gray-800',
@@ -79,58 +79,77 @@ const formatCommand = (command: ICommand): string => {
   }
 };
 
-// ─── Dust puff particle system ───────────────────────────────────────
+// ─── Fire particle system ────────────────────────────────────────────
 
-interface Puff {
+interface FireBurst {
   position: Vector3;
   time: number;
-  particles: { offset: Vector3; speed: number }[];
+  particles: { offset: Vector3; rise: number; spread: number }[];
 }
 
-const PUFF_LIFETIME = 0.6;
-const PUFF_COUNT = 10;
+const FIRE_LIFETIME = 0.4;
+const FIRE_COLOR_HOT = new Color('#fff080');
+const FIRE_COLOR_MID = new Color('#ff7a1a');
+const FIRE_COLOR_COLD = new Color('#7a0a00');
 
-const DustPuffs = ({
-  puffsRef,
+const MAX_BURSTS = 24;
+const MAX_PARTICLES_POOL = 200;
+
+const FireParticles = ({
+  burstsRef,
 }: {
-  puffsRef: React.MutableRefObject<Puff[]>;
+  burstsRef: React.MutableRefObject<FireBurst[]>;
 }) => {
   const meshRefs = useRef<(Mesh | null)[]>([]);
-  const maxPuffs = 8;
-  const maxParticles = maxPuffs * PUFF_COUNT;
+  const tmpColor = useRef(new Color());
 
   useFrame((_, delta) => {
     let idx = 0;
-    for (let i = puffsRef.current.length - 1; i >= 0; i--) {
-      const puff = puffsRef.current[i];
-      puff.time += delta;
-      if (puff.time > PUFF_LIFETIME) {
-        puffsRef.current.splice(i, 1);
+    for (let i = burstsRef.current.length - 1; i >= 0; i--) {
+      const burst = burstsRef.current[i];
+      burst.time += delta;
+      if (burst.time > FIRE_LIFETIME) {
+        burstsRef.current.splice(i, 1);
         continue;
       }
-      const progress = puff.time / PUFF_LIFETIME;
-      const opacity = 1 - progress;
-      const scale = 0.03 + progress * 0.06;
+      const progress = burst.time / FIRE_LIFETIME;
 
-      for (const particle of puff.particles) {
-        if (idx >= maxParticles) break;
+      // Color: hot yellow → orange → deep red
+      const c = tmpColor.current;
+      if (progress < 0.5) {
+        c.copy(FIRE_COLOR_HOT).lerp(FIRE_COLOR_MID, progress * 2);
+      } else {
+        c.copy(FIRE_COLOR_MID).lerp(FIRE_COLOR_COLD, (progress - 0.5) * 2);
+      }
+
+      // Scale: grows quickly, then shrinks at end
+      const scale =
+        progress < 0.3
+          ? 0.04 + progress * 0.25
+          : 0.115 - (progress - 0.3) * 0.13;
+
+      // Opacity: full early, fades at end
+      const opacity = progress < 0.7 ? 1 : 1 - (progress - 0.7) / 0.3;
+
+      for (const particle of burst.particles) {
+        if (idx >= MAX_PARTICLES_POOL) break;
         const mesh = meshRefs.current[idx];
         if (mesh) {
           mesh.position.set(
-            puff.position.x + particle.offset.x * progress * particle.speed,
-            puff.position.y +
-              progress * 0.3 +
-              particle.offset.y * progress * 0.5,
-            puff.position.z + particle.offset.z * progress * particle.speed
+            burst.position.x + particle.offset.x * progress * particle.spread,
+            burst.position.y + 0.1 + progress * particle.rise,
+            burst.position.z + particle.offset.z * progress * particle.spread
           );
           mesh.scale.setScalar(scale);
-          (mesh.material as MeshStandardMaterial).opacity = opacity * 0.6;
+          const mat = mesh.material as MeshBasicMaterial;
+          mat.color.copy(c);
+          mat.opacity = opacity;
           mesh.visible = true;
         }
         idx++;
       }
     }
-    for (let i = idx; i < maxParticles; i++) {
+    for (let i = idx; i < MAX_PARTICLES_POOL; i++) {
       const mesh = meshRefs.current[i];
       if (mesh) mesh.visible = false;
     }
@@ -138,7 +157,7 @@ const DustPuffs = ({
 
   return (
     <>
-      {Array.from({ length: maxParticles }, (_, i) => (
+      {Array.from({ length: MAX_PARTICLES_POOL }, (_, i) => (
         <mesh
           key={i}
           ref={(el) => {
@@ -147,11 +166,12 @@ const DustPuffs = ({
           visible={false}
         >
           <sphereGeometry args={[1, 6, 6]} />
-          <meshStandardMaterial
-            color="#c8b8a8"
+          <meshBasicMaterial
+            color="#fff080"
             transparent
             opacity={0}
             depthWrite={false}
+            blending={AdditiveBlending}
           />
         </mesh>
       ))}
@@ -159,24 +179,26 @@ const DustPuffs = ({
   );
 };
 
-const spawnPuff = (
-  puffsRef: React.MutableRefObject<Puff[]>,
-  position: Vector3
+const spawnFire = (
+  burstsRef: React.MutableRefObject<FireBurst[]>,
+  position: Vector3,
+  count: number = 6
 ) => {
-  const particles = Array.from({ length: PUFF_COUNT }, () => ({
+  const particles = Array.from({ length: count }, () => ({
     offset: new Vector3(
       (Math.random() - 0.5) * 2,
-      Math.random() * 0.5,
+      0,
       (Math.random() - 0.5) * 2
     ),
-    speed: 0.5 + Math.random() * 1,
+    rise: 0.5 + Math.random() * 0.6,
+    spread: 0.15 + Math.random() * 0.25,
   }));
-  puffsRef.current.push({
+  burstsRef.current.push({
     position: position.clone(),
     time: 0,
     particles,
   });
-  if (puffsRef.current.length > 8) puffsRef.current.shift();
+  if (burstsRef.current.length > MAX_BURSTS) burstsRef.current.shift();
 };
 
 // ─── Grid coordinate labels ─────────────────────────────────────────
@@ -398,7 +420,7 @@ const Scene = ({
 }) => {
   const characterRef = useRef<Group>(null!);
   const controlsRef = useRef<any>(null!);
-  const puffsRef = useRef<Puff[]>([]);
+  const burstsRef = useRef<FireBurst[]>([]);
 
   return (
     <>
@@ -409,9 +431,9 @@ const Scene = ({
         onComplete={onComplete}
         onCommandIndex={onCommandIndex}
         groupRef={characterRef}
-        puffsRef={puffsRef}
+        burstsRef={burstsRef}
       />
-      <DustPuffs puffsRef={puffsRef} />
+      <FireParticles burstsRef={burstsRef} />
       <OrbitControls
         ref={controlsRef}
         zoomSpeed={0.25}
@@ -436,14 +458,14 @@ const Character = ({
   onComplete,
   onCommandIndex,
   groupRef,
-  puffsRef,
+  burstsRef,
 }: {
   commands: ICommand[];
   timelineRef: React.MutableRefObject<gsap.core.Timeline | null>;
   onComplete: () => void;
   onCommandIndex: (index: number) => void;
   groupRef: React.RefObject<Group>;
-  puffsRef: React.MutableRefObject<Puff[]>;
+  burstsRef: React.MutableRefObject<FireBurst[]>;
 }) => {
   const bodyRef = useRef<Mesh>(null!);
   const lightRef = useRef<PointLightType>(null!);
@@ -507,8 +529,8 @@ const Character = ({
           duration: 0.15,
           ease: 'power2.out',
         });
-        // Dust on takeoff
-        tl.call(() => spawnPuff(puffsRef, groupRef.current!.position));
+        // Big takeoff burst
+        tl.call(() => spawnFire(burstsRef, groupRef.current!.position, 14));
         tl.to(
           groupRef.current!.position,
           {
@@ -530,6 +552,17 @@ const Character = ({
           },
           '<'
         );
+        // Continuous thrust trail mid-flight (stops FIRE_LIFETIME before landing so it fades by then)
+        const jumpEmitDur = jumpDuration - FIRE_LIFETIME;
+        const jumpEmitInterval = 0.07;
+        const jumpEmitCount = Math.floor(jumpEmitDur / jumpEmitInterval);
+        for (let s = 0; s < jumpEmitCount; s++) {
+          tl.call(
+            () => spawnFire(burstsRef, groupRef.current!.position, 5),
+            [],
+            s === 0 ? '<' : `<+=${jumpEmitInterval}`
+          );
+        }
         // Midair normalize
         tl.to(
           groupRef.current!.scale,
@@ -542,8 +575,6 @@ const Character = ({
           },
           '<'
         );
-        // Landing squash + dust
-        tl.call(() => spawnPuff(puffsRef, groupRef.current!.position));
         tl.to(groupRef.current!.scale, {
           x: 1.2,
           y: 0.7,
@@ -597,12 +628,15 @@ const Character = ({
           },
           '<'
         );
-        // Dust puffs during walk (every few steps)
-        for (let s = 0; s < steps; s += 2) {
+        // Continuous fire trail during walk (stops FIRE_LIFETIME before end so all particles fade by stop)
+        const walkEmitDur = walkDuration - FIRE_LIFETIME;
+        const walkEmitInterval = 0.06;
+        const walkEmitCount = Math.floor(walkEmitDur / walkEmitInterval);
+        for (let s = 0; s < walkEmitCount; s++) {
           tl.call(
-            () => spawnPuff(puffsRef, groupRef.current!.position),
+            () => spawnFire(burstsRef, groupRef.current!.position, 5),
             [],
-            `<+=${s * stepDur}`
+            s === 0 ? '<' : `<+=${walkEmitInterval}`
           );
         }
         // Settle tilt
@@ -656,7 +690,7 @@ const Character = ({
       tl.kill();
       timelineRef.current = null;
     };
-  }, [commands, timelineRef, onComplete, onCommandIndex, groupRef, puffsRef]);
+  }, [commands, timelineRef, onComplete, onCommandIndex, groupRef, burstsRef]);
 
   return (
     <group ref={groupRef} position={[0, 0, 0]}>
