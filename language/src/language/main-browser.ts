@@ -40,9 +40,14 @@ shared.workspace.DocumentBuilder.onBuildPhase(
     for (const document of documents) {
       const module = document.parseResult.value as Model;
 
-      (
-        module as unknown as { $scene: ReturnType<typeof generateScene> }
-      ).$scene = generateScene(module);
+      try {
+        (
+          module as unknown as { $scene: ReturnType<typeof generateScene> }
+        ).$scene = generateScene(module);
+      } catch {
+        // Generator may fail on partially-parsed or invalid ASTs —
+        // skip scene generation so the LSP can still report diagnostics.
+      }
 
       // inject the scene into the model
       // this is safe so long as you careful to not clobber existing properties

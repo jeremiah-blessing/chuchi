@@ -85,19 +85,19 @@ const stepToCommand = (step: any): Command => {
     return { type: 'turn', direction: step.direction };
   }
   if (isPickup(step)) {
-    return { type: 'pickup', name: step.targetRef.$refText };
+    return { type: 'pickup', name: step.targetRef?.$refText ?? '' };
   }
   if (isDrop(step)) {
     return { type: 'drop' };
   }
   if (isLoad(step)) {
-    return { type: 'load', name: step.targetRef.$refText };
+    return { type: 'load', name: step.targetRef?.$refText ?? '' };
   }
   if (isUnload(step)) {
-    return { type: 'unload', name: step.targetRef.$refText };
+    return { type: 'unload', name: step.targetRef?.$refText ?? '' };
   }
   if (isScan(step)) {
-    return { type: 'scan', name: step.targetRef.$refText };
+    return { type: 'scan', name: step.targetRef?.$refText ?? '' };
   }
   if (isCharge(step)) {
     return { type: 'charge' };
