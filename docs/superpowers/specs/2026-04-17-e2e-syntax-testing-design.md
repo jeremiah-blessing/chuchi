@@ -202,7 +202,17 @@ The output is saved as `e2e/fixtures/generated.json` and committed. Regenerate o
 
 1. **Language specification** -- full grammar, syntax rules, validation rules, simulation runtime errors (content from the current `CHOCHI-LANGUAGE-REFERENCE.md`, which is deleted)
 2. **Output format specification** -- JSON schema for the fixture array
-3. **Generation instructions** -- distribution, variety, and naming guidelines
+3. **Output destination** -- explicitly instructs the LLM to write the generated JSON to `e2e/fixtures/generated.json`. This means CLI tools like Claude Code can write the file directly without manual copy/paste.
+4. **Generation instructions** -- distribution, variety, and naming guidelines
+
+### Usage with Claude Code CLI
+
+```bash
+cd /path/to/chuchi
+claude -p "$(cat e2e/GENERATE-TEST-PROGRAMS.md)"
+```
+
+Because the prompt includes the output path, Claude Code will write `e2e/fixtures/generated.json` directly. No manual copy/paste needed.
 
 ## File Changes Summary
 
