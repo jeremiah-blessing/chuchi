@@ -1,0 +1,232 @@
+[
+  {
+    "name": "small_warehouse_basic_movement",
+    "category": "valid",
+    "description": "Simple 3x3 warehouse with basic goTo coordinate movement",
+    "code": "warehouse : size(3, 3)\nrobot : start at (0, 0) facing right\ntasks :\n  patrol :\n    goTo(2, 0)\n    turn(down)\n    goTo(2, 2)\n    goTo(0, 2)"
+  },
+  {
+    "name": "small_warehouse_pickup_and_drop",
+    "category": "valid",
+    "description": "4x4 warehouse demonstrating pickup and drop commands",
+    "code": "warehouse : size(4, 4)\nrobot : start at (0, 0) facing right\nobjects :\n  package incomingParcel at (2, 0)\ntasks :\n  deliver :\n    goTo(incomingParcel)\n    pickup(incomingParcel)\n    goTo(3, 3)\n    drop()"
+  },
+  {
+    "name": "medium_warehouse_full_workflow",
+    "category": "valid",
+    "description": "8x6 warehouse with shelf load/unload and all object kinds",
+    "code": "warehouse : size(8, 6)\nrobot : start at (0, 0) facing right\nobjects :\n  package incomingBox at (3, 0)\n  shelf storageRackA at (5, 0)\n  charger chargingStation1 at (7, 0)\ntasks :\n  storePackage :\n    goTo(incomingBox)\n    pickup(incomingBox)\n    goTo(storageRackA)\n    load(storageRackA)\n  recharge :\n    goTo(chargingStation1)\n    charge()"
+  },
+  {
+    "name": "medium_warehouse_with_waypoints",
+    "category": "valid",
+    "description": "10x8 warehouse using waypoints as goTo targets",
+    "code": "warehouse : size(10, 8)\nrobot : start at (0, 0) facing right\nobjects :\n  shelf warehouse_shelf_A at (4, 3)\n  package deliveryItem at (7, 3)\nwaypoints :\n  dockingBay at (0, 7)\n  sortingArea at (9, 0)\ntasks :\n  fetchAndStore :\n    goTo(deliveryItem)\n    pickup(deliveryItem)\n    goTo(warehouse_shelf_A)\n    load(warehouse_shelf_A)\n  returnToDock :\n    goTo(dockingBay)"
+  },
+  {
+    "name": "large_warehouse_multi_task",
+    "category": "valid",
+    "description": "15x12 warehouse with multiple tasks, unload, scan, and turn commands",
+    "code": "warehouse : size(15, 12)\nrobot : start at (0, 0) facing right\nobjects :\n  shelf mainStorage at (5, 0)\n  package crateAlpha at (10, 0)\n  charger powerDock at (14, 0)\nwaypoints :\n  checkpoint1 at (7, 6)\ntasks :\n  inspectShelf :\n    goTo(mainStorage)\n    unload(mainStorage)\n    turn(down)\n    goTo(checkpoint1)\n    drop()\n  scanAndCharge :\n    goTo(crateAlpha)\n    scan(crateAlpha)\n    goTo(powerDock)\n    charge()"
+  },
+  {
+    "name": "large_warehouse_with_obstacles",
+    "category": "valid",
+    "description": "20x15 warehouse with obstacles and a clear path around them",
+    "code": "warehouse : size(20, 15)\nrobot : start at (0, 0) facing down\nobjects :\n  package parcelBeta at (0, 5)\n  shelf rackB at (0, 10)\nobstacles :\n  from (3, 0) to (3, 4)\n  at (10, 10)\ntasks :\n  collectAndStore :\n    goTo(parcelBeta)\n    pickup(parcelBeta)\n    goTo(rackB)\n    load(rackB)"
+  },
+  {
+    "name": "all_commands_used",
+    "category": "valid",
+    "description": "Exercises all 8 command types in a single task sequence",
+    "code": "warehouse : size(6, 6)\nrobot : start at (0, 0) facing right\nobjects :\n  package supplyCrate at (3, 0)\n  shelf depotShelf at (5, 0)\n  charger wallCharger at (5, 5)\nwaypoints :\n  origin at (0, 0)\ntasks :\n  fullRun :\n    goTo(3, 0)\n    scan(supplyCrate)\n    pickup(supplyCrate)\n    turn(right)\n    goTo(depotShelf)\n    load(depotShelf)\n    goTo(wallCharger)\n    charge()\n    goTo(depotShelf)\n    unload(depotShelf)\n    drop()\n    goTo(origin)"
+  },
+  {
+    "name": "only_required_sections",
+    "category": "valid",
+    "description": "Minimal program with only the three required sections",
+    "code": "warehouse : size(4, 4)\nrobot : start at (3, 3) facing left\ntasks :\n  simpleMove :\n    goTo(0, 3)\n    turn(up)\n    goTo(0, 0)"
+  },
+  {
+    "name": "comments_throughout",
+    "category": "valid",
+    "description": "Program heavily annotated with single-line and block comments",
+    "code": "// Warehouse configuration\nwarehouse : size(5, 5)\n/* Robot starts in the corner\n   facing downward */\nrobot : start at (0, 0) facing down\nobjects :\n  // A shelf for storage\n  shelf inventoryShelf at (4, 4)\n  package newArrival at (0, 4)\ntasks :\n  logistics : // main logistics task\n    goTo(0, 4) // move to package\n    pickup(newArrival)\n    goTo(inventoryShelf) /* go to shelf */\n    load(inventoryShelf)"
+  },
+  {
+    "name": "named_goto_multiple_waypoints",
+    "category": "valid",
+    "description": "Uses named goTo with multiple waypoints for navigation",
+    "code": "warehouse : size(8, 8)\nrobot : start at (0, 0) facing right\nobjects :\n  charger quickCharge at (7, 7)\nwaypoints :\n  cornerNE at (7, 0)\n  cornerSE at (7, 7)\n  cornerSW at (0, 7)\ntasks :\n  perimeterLoop :\n    goTo(cornerNE)\n    turn(down)\n    goTo(cornerSE)\n    charge()\n    goTo(cornerSW)\n    goTo(0, 0)"
+  },
+  {
+    "name": "missing_warehouse_section",
+    "category": "parse-error",
+    "description": "Program omits the required warehouse section",
+    "code": "robot : start at (0, 0) facing right\nobjects :\n  shelf rackOne at (1, 1)\ntasks :\n  moveTask : goTo(1, 1)",
+    "expectedErrors": ["Missing required section 'warehouse'"]
+  },
+  {
+    "name": "missing_robot_section",
+    "category": "parse-error",
+    "description": "Program omits the required robot section",
+    "code": "warehouse : size(5, 5)\nobjects :\n  package box1 at (2, 2)\ntasks :\n  moveTask : goTo(2, 2)",
+    "expectedErrors": ["Missing required section 'robot'"]
+  },
+  {
+    "name": "warehouse_zero_width",
+    "category": "parse-error",
+    "description": "Warehouse width is 0 which is invalid",
+    "code": "warehouse : size(0, 5)\nrobot : start at (0, 0) facing right\ntasks :\n  moveTask : goTo(0, 1)",
+    "expectedErrors": ["Warehouse width must be positive"]
+  },
+  {
+    "name": "warehouse_negative_height",
+    "category": "parse-error",
+    "description": "Warehouse height is negative which is invalid",
+    "code": "warehouse : size(5, -3)\nrobot : start at (0, 0) facing right\ntasks :\n  moveTask : goTo(1, 1)",
+    "expectedErrors": ["Warehouse height must be positive"]
+  },
+  {
+    "name": "robot_start_out_of_bounds",
+    "category": "parse-error",
+    "description": "Robot start position exceeds warehouse dimensions",
+    "code": "warehouse : size(4, 4)\nrobot : start at (5, 5) facing right\ntasks :\n  moveTask : goTo(1, 1)",
+    "expectedErrors": ["robot start (5, 5) is outside warehouse bounds"]
+  },
+  {
+    "name": "object_out_of_bounds",
+    "category": "parse-error",
+    "description": "A shelf is placed outside the warehouse grid",
+    "code": "warehouse : size(5, 5)\nrobot : start at (0, 0) facing right\nobjects :\n  shelf farShelf at (10, 10)\ntasks :\n  moveTask : goTo(1, 1)",
+    "expectedErrors": [
+      "Object 'farShelf' at (10, 10) is outside warehouse bounds"
+    ]
+  },
+  {
+    "name": "robot_on_obstacle",
+    "category": "parse-error",
+    "description": "Robot start position overlaps with an obstacle cell",
+    "code": "warehouse : size(5, 5)\nrobot : start at (2, 2) facing right\nobstacles :\n  at (2, 2)\ntasks :\n  moveTask : goTo(1, 1)",
+    "expectedErrors": ["robot start (2, 2) is on an obstacle"]
+  },
+  {
+    "name": "object_on_obstacle",
+    "category": "parse-error",
+    "description": "A package is placed on an obstacle cell",
+    "code": "warehouse : size(5, 5)\nrobot : start at (0, 0) facing right\nobjects :\n  package blockedPkg at (3, 3)\nobstacles :\n  at (3, 3)\ntasks :\n  moveTask : goTo(1, 1)",
+    "expectedErrors": ["Object 'blockedPkg' overlaps an obstacle at (3, 3)"]
+  },
+  {
+    "name": "two_objects_same_coordinate",
+    "category": "parse-error",
+    "description": "Two objects placed at the same coordinate",
+    "code": "warehouse : size(5, 5)\nrobot : start at (0, 0) facing right\nobjects :\n  shelf rackAlpha at (2, 2)\n  package crateBravo at (2, 2)\ntasks :\n  moveTask : goTo(1, 1)",
+    "expectedErrors": ["same coordinate"]
+  },
+  {
+    "name": "duplicate_name_object_and_waypoint",
+    "category": "parse-error",
+    "description": "An object and a waypoint share the same name",
+    "code": "warehouse : size(5, 5)\nrobot : start at (0, 0) facing right\nobjects :\n  shelf loadingDock at (3, 0)\nwaypoints :\n  loadingDock at (4, 4)\ntasks :\n  moveTask : goTo(1, 1)",
+    "expectedErrors": ["Duplicate name 'loadingDock'"]
+  },
+  {
+    "name": "unresolved_goto_reference",
+    "category": "parse-error",
+    "description": "goTo references a name that does not exist",
+    "code": "warehouse : size(5, 5)\nrobot : start at (0, 0) facing right\ntasks :\n  moveTask : goTo(phantomTarget)",
+    "expectedErrors": ["Could not resolve reference"]
+  },
+  {
+    "name": "load_on_package_type_error",
+    "category": "parse-error",
+    "description": "load command targets a package instead of a shelf",
+    "code": "warehouse : size(5, 5)\nrobot : start at (0, 0) facing right\nobjects :\n  package looseBox at (2, 0)\ntasks :\n  storeTask : load(looseBox)",
+    "expectedErrors": ["load requires a shelf, but 'looseBox' is a package"]
+  },
+  {
+    "name": "unload_on_charger_type_error",
+    "category": "parse-error",
+    "description": "unload command targets a charger instead of a shelf",
+    "code": "warehouse : size(5, 5)\nrobot : start at (0, 0) facing right\nobjects :\n  charger wallPlug at (3, 0)\ntasks :\n  retrieveTask : unload(wallPlug)",
+    "expectedErrors": ["unload requires a shelf, but 'wallPlug' is a charger"]
+  },
+  {
+    "name": "goto_coordinates_out_of_bounds",
+    "category": "parse-error",
+    "description": "goTo specifies coordinates outside warehouse bounds",
+    "code": "warehouse : size(4, 4)\nrobot : start at (0, 0) facing right\ntasks :\n  moveTask : goTo(10, 10)",
+    "expectedErrors": ["goTo(10, 10) is outside warehouse bounds"]
+  },
+  {
+    "name": "goto_path_crosses_obstacle",
+    "category": "simulation-error",
+    "description": "Horizontal-first path from (0,0) to (4,0) crosses obstacle at (2,0)",
+    "code": "warehouse : size(5, 5)\nrobot : start at (0, 0) facing right\nobstacles :\n  at (2, 0)\ntasks :\n  blockedPath : goTo(4, 0)",
+    "expectedError": "goTo path crosses obstacle at (2, 0)"
+  },
+  {
+    "name": "goto_path_crosses_obstacle_vertical",
+    "category": "simulation-error",
+    "description": "Path from (3,0) to (3,4) crosses obstacle at (3,2) during vertical segment",
+    "code": "warehouse : size(5, 5)\nrobot : start at (3, 0) facing down\nobstacles :\n  at (3, 2)\ntasks :\n  blockedVertical : goTo(3, 4)",
+    "expectedError": "goTo path crosses obstacle at (3, 2)"
+  },
+  {
+    "name": "pickup_not_at_package_location",
+    "category": "simulation-error",
+    "description": "Robot tries to pickup a package without being at its location",
+    "code": "warehouse : size(6, 6)\nrobot : start at (0, 0) facing right\nobjects :\n  package remoteParcel at (5, 5)\ntasks :\n  badPickup : pickup(remoteParcel)",
+    "expectedError": "Robot is not at package 'remoteParcel'"
+  },
+  {
+    "name": "pickup_already_carrying",
+    "category": "simulation-error",
+    "description": "Robot tries to pickup a second package while already carrying one",
+    "code": "warehouse : size(6, 6)\nrobot : start at (0, 0) facing right\nobjects :\n  package firstBox at (0, 0)\n  package secondBox at (3, 0)\ntasks :\n  doublePickup :\n    pickup(firstBox)\n    goTo(secondBox)\n    pickup(secondBox)",
+    "expectedError": "Robot is already carrying 'firstBox'"
+  },
+  {
+    "name": "drop_when_not_carrying",
+    "category": "simulation-error",
+    "description": "Robot tries to drop without carrying anything",
+    "code": "warehouse : size(4, 4)\nrobot : start at (0, 0) facing right\ntasks :\n  emptyDrop : drop()",
+    "expectedError": "Robot has nothing to drop"
+  },
+  {
+    "name": "load_not_at_shelf",
+    "category": "simulation-error",
+    "description": "Robot tries to load a shelf it is not standing on",
+    "code": "warehouse : size(6, 6)\nrobot : start at (0, 0) facing right\nobjects :\n  package boxToLoad at (0, 0)\n  shelf distantRack at (5, 5)\ntasks :\n  badLoad :\n    pickup(boxToLoad)\n    load(distantRack)",
+    "expectedError": "Robot is not at shelf 'distantRack'"
+  },
+  {
+    "name": "load_not_carrying_anything",
+    "category": "simulation-error",
+    "description": "Robot tries to load onto a shelf without carrying anything",
+    "code": "warehouse : size(5, 5)\nrobot : start at (2, 0) facing right\nobjects :\n  shelf nearbyShelf at (2, 0)\ntasks :\n  emptyLoad : load(nearbyShelf)",
+    "expectedError": "Robot is not carrying anything to load"
+  },
+  {
+    "name": "unload_already_carrying",
+    "category": "simulation-error",
+    "description": "Robot tries to unload from a shelf while already carrying something",
+    "code": "warehouse : size(5, 5)\nrobot : start at (0, 0) facing right\nobjects :\n  package heldItem at (0, 0)\n  shelf targetShelf at (3, 0)\ntasks :\n  carryAndUnload :\n    pickup(heldItem)\n    goTo(targetShelf)\n    unload(targetShelf)",
+    "expectedError": "Robot is already carrying 'heldItem'"
+  },
+  {
+    "name": "scan_not_at_object",
+    "category": "simulation-error",
+    "description": "Robot tries to scan an object it is not standing on",
+    "code": "warehouse : size(5, 5)\nrobot : start at (0, 0) facing right\nobjects :\n  shelf remoteShelf at (4, 4)\ntasks :\n  remoteScan : scan(remoteShelf)",
+    "expectedError": "Robot is not at 'remoteShelf'"
+  },
+  {
+    "name": "charge_not_at_charger",
+    "category": "simulation-error",
+    "description": "Robot tries to charge but is not standing on any charger",
+    "code": "warehouse : size(5, 5)\nrobot : start at (0, 0) facing right\nobjects :\n  charger farCharger at (4, 4)\ntasks :\n  missedCharge : charge()",
+    "expectedError": "Robot is not at any charger"
+  }
+]
