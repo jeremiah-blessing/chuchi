@@ -14,7 +14,8 @@
   "license": "ISC",
   "workspaces": [
     "frontend",
-    "language"
+    "language",
+    "e2e"
   ],
   "lint-staged": {
     "*.+(js|jsx|ts|tsx|json|yml|yaml|md|css|scss)": "prettier --write"
