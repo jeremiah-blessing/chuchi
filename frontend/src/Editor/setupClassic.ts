@@ -79,6 +79,7 @@ export const executeClassic = async (
   await wrapper.initAndStart(userConfig, htmlElement);
   registerChochiThemes();
   const monaco = await import('monaco-editor');
+  (window as any).monaco = monaco;
   monaco.editor.setTheme('chochi-dark');
 
   const client = wrapper.getLanguageClient();

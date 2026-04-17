@@ -102,6 +102,7 @@ export const Player = ({
   if (!scene || !simulation) {
     return (
       <div
+        data-testid="player-placeholder"
         className={`w-full h-full flex items-center justify-center ${
           isDark ? 'text-gray-400' : 'text-gray-500'
         }`}
@@ -114,9 +115,12 @@ export const Player = ({
   const activeCommand = scene.commands[activeCommandIndex];
 
   return (
-    <div className="w-full h-full relative">
+    <div data-testid="player-viewport" className="w-full h-full relative">
       {activeCommand && (
-        <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10">
+        <div
+          data-testid="command-status"
+          className="absolute top-3 left-1/2 -translate-x-1/2 z-10"
+        >
           <div
             className={`px-3 py-1.5 rounded-lg border backdrop-blur-sm ${
               isDark
@@ -154,6 +158,7 @@ export const Player = ({
             }`}
           >
             <code
+              data-testid="simulation-error"
               className={`text-sm font-mono ${
                 isDark ? 'text-red-100' : 'text-red-800'
               }`}

@@ -39,6 +39,7 @@ export const Editor = ({ onScene = () => {}, theme = 'dark' }: EditorProps) => {
 
   return (
     <div
+      data-testid="editor-container"
       className={`w-full h-full px-4 transition-colors duration-300 ${
         theme === 'dark' ? 'bg-[#1E1E1E]' : 'bg-[#fffffe]'
       }`}
