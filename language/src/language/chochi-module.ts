@@ -15,6 +15,7 @@ import {
   ChochiValidator,
   registerValidationChecks,
 } from './chochi-validator.js';
+import { ChochiFormatter } from './chochi-formatter.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -42,6 +43,9 @@ export const ChochiModule: Module<
 > = {
   validation: {
     ChochiValidator: () => new ChochiValidator(),
+  },
+  lsp: {
+    Formatter: () => new ChochiFormatter(),
   },
 };
 

@@ -66,4 +66,14 @@ shared.workspace.DocumentBuilder.onBuildPhase(
   }
 );
 
+// Disable range formatting so only one "Format Document" entry appears
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const server = shared.lsp.LanguageServer as any;
+const origBuild = server.buildInitializeResult.bind(server);
+server.buildInitializeResult = (params: unknown) => {
+  const result = origBuild(params);
+  result.capabilities.documentRangeFormattingProvider = false;
+  return result;
+};
+
 startLanguageServer(shared);
