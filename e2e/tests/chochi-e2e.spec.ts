@@ -27,8 +27,8 @@ function loadFixtures(): Fixture[] {
 }
 
 const fixtures = loadFixtures();
-const SLOW_TYPE = !!process.env.SLOW_TYPE;
-const TYPE_DELAY = Number(process.env.TYPE_DELAY) || 15;
+const HEADED = !!process.env.HEADED;
+const TYPE_DELAY = Number(process.env.TYPE_DELAY) || (HEADED ? 30 : 5);
 
 async function waitForMonacoReady(page: Page): Promise<void> {
   await page.waitForFunction(
@@ -48,18 +48,10 @@ async function setEditorContent(page: Page, code: string): Promise<void> {
     editor.focus();
   });
 
-  if (SLOW_TYPE) {
-    // Type character by character so you can watch it fill in
-    await page
-      .locator('[data-testid="editor-container"] .monaco-editor textarea')
-      .first()
-      .pressSequentially(code, { delay: TYPE_DELAY });
-  } else {
-    await page.evaluate((c) => {
-      const editor = (window as any).monaco.editor.getEditors()[0];
-      editor.setValue(c);
-    }, code);
-  }
+  await page
+    .locator('[data-testid="editor-container"] .monaco-editor textarea')
+    .first()
+    .pressSequentially(code, { delay: TYPE_DELAY });
 }
 
 async function waitForLspStability(page: Page): Promise<void> {

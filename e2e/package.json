@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "playwright test",
-    "test:headed": "playwright test --headed",
+    "test:headed": "HEADED=1 playwright test --headed --retries 0",
     "test:debug": "playwright test --debug"
   },
   "devDependencies": {
