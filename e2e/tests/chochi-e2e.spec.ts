@@ -150,8 +150,12 @@ for (const fixture of fixtures) {
     }
 
     // Always assert no unexpected console errors
+    // Filter out benign warnings from Monaco/vscode wrapper and Three.js
     const realErrors = consoleErrors.filter(
-      (msg) => !msg.includes('WebGL') && !msg.includes('THREE')
+      (msg) =>
+        !msg.includes('WebGL') &&
+        !msg.includes('THREE') &&
+        !msg.includes('already has context attribute')
     );
     expect(
       realErrors,
